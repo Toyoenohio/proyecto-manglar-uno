@@ -71,7 +71,7 @@ html {
 
 body {
     font-family: var(--fuente-principal);
-    background-color: var(--gris-claro);
+    background-color: var(--blanco);
     color: var(--gris-oscuro);
     line-height: 1.5;
     overflow-x: hidden;
@@ -83,7 +83,7 @@ body {
 .mobile-container {
     max-width: 428px; /* iPhone 14 Pro max width */
     margin: 0 auto;
-    background-color: var(--gris-claro);
+    background-color: var(--blanco);
     min-height: 100vh;
     position: relative;
     padding-bottom: 84px; /* Space for bottom nav */
@@ -240,14 +240,14 @@ body {
 }
 
 .academic-body {
-    text-align: center;
+    text-align: left;
     margin-bottom: var(--space-5);
 }
 
 .grade-large {
     display: flex;
     align-items: baseline;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 4px;
     margin-bottom: var(--space-2);
 }
@@ -349,6 +349,7 @@ body {
     border-radius: var(--radius-md);
     padding: var(--space-4);
     display: flex;
+    align-items: center;
     gap: var(--space-3);
     box-shadow: var(--shadow-sm);
     scroll-snap-align: start;
