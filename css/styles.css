@@ -1,0 +1,329 @@
+/* ========================================
+   Variables CSS
+   ======================================== */
+:root {
+    /* Colores */
+    --color-primario: #29ABE2;
+    --color-secundario: #1A1F2B;
+    --color-acento: #F9F9FB;
+    --color-texto: #333333;
+    --color-blanco: #FFFFFF;
+    --color-gris: #666666;
+    
+    /* Tipografía */
+    --fuente-principal: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --fuente-titulos: 'Georgia', serif;
+    
+    /* Espaciado */
+    --espacio-xs: 0.5rem;
+    --espacio-sm: 1rem;
+    --espacio-md: 2rem;
+    --espacio-lg: 4rem;
+    
+    /* Border Radius */
+    --border-radius: 8px;
+    
+    /* Sombras */
+    --sombra-suave: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --sombra-media: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* ========================================
+   Reset & Base
+   ======================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--fuente-principal);
+    color: var(--color-texto);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--espacio-sm);
+}
+
+/* ========================================
+   Header & Navegación
+   ======================================== */
+.header {
+    background-color: var(--color-blanco);
+    box-shadow: var(--sombra-suave);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar {
+    padding: var(--espacio-sm) 0;
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--color-primario);
+    text-decoration: none;
+    font-family: var(--fuente-titulos);
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: var(--espacio-md);
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--color-secundario);
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--color-primario);
+}
+
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    background: none;
+    border: none;
+    cursor: pointer;
+    gap: 5px;
+}
+
+.menu-toggle span {
+    width: 25px;
+    height: 3px;
+    background-color: var(--color-secundario);
+    transition: all 0.3s ease;
+}
+
+/* ========================================
+   Hero Section
+   ======================================== */
+.hero {
+    background: linear-gradient(135deg, var(--color-primario), var(--color-secundario));
+    color: var(--color-blanco);
+    padding: var(--espacio-lg) 0;
+    text-align: center;
+    margin-top: 60px;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    font-family: var(--fuente-titulos);
+    margin-bottom: var(--espacio-sm);
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    margin-bottom: var(--espacio-md);
+    opacity: 0.9;
+}
+
+/* ========================================
+   Botones
+   ======================================== */
+.btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background-color: var(--color-blanco);
+    color: var(--color-primario);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-acento);
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-media);
+}
+
+/* ========================================
+   Secciones
+   ======================================== */
+.about,
+.services,
+.contact {
+    padding: var(--espacio-lg) 0;
+}
+
+.about {
+    background-color: var(--color-acento);
+}
+
+.services {
+    background-color: var(--color-blanco);
+}
+
+.contact {
+    background-color: var(--color-acento);
+}
+
+section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-family: var(--fuente-titulos);
+    color: var(--color-secundario);
+    margin-bottom: var(--espacio-md);
+}
+
+/* ========================================
+   Servicios Grid
+   ======================================== */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--espacio-md);
+    margin-top: var(--espacio-md);
+}
+
+.service-card {
+    background-color: var(--color-blanco);
+    padding: var(--espacio-md);
+    border-radius: var(--border-radius);
+    box-shadow: var(--sombra-suave);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--sombra-media);
+}
+
+.service-card h3 {
+    color: var(--color-primario);
+    margin-bottom: var(--espacio-xs);
+}
+
+/* ========================================
+   Formulario de Contacto
+   ======================================== */
+.contact-form {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: var(--color-blanco);
+    padding: var(--espacio-md);
+    border-radius: var(--border-radius);
+    box-shadow: var(--sombra-suave);
+}
+
+.form-group {
+    margin-bottom: var(--espacio-sm);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--espacio-xs);
+    font-weight: 600;
+    color: var(--color-secundario);
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-family: var(--fuente-principal);
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--color-primario);
+}
+
+/* ========================================
+   Footer
+   ======================================== */
+.footer {
+    background-color: var(--color-secundario);
+    color: var(--color-blanco);
+    text-align: center;
+    padding: var(--espacio-md) 0;
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: flex;
+    }
+    
+    .nav-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: var(--color-blanco);
+        flex-direction: column;
+        padding: var(--espacio-sm);
+        box-shadow: var(--sombra-suave);
+        display: none;
+    }
+    
+    .nav-menu.active {
+        display: flex;
+    }
+    
+    .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    section h2 {
+        font-size: 2rem;
+    }
+}
+
+/* ========================================
+   Utilidades
+   ======================================== */
+.text-center {
+    text-align: center;
+}
+
+.mt-1 { margin-top: var(--espacio-xs); }
+.mt-2 { margin-top: var(--espacio-sm); }
+.mt-3 { margin-top: var(--espacio-md); }
+
+.mb-1 { margin-bottom: var(--espacio-xs); }
+.mb-2 { margin-bottom: var(--espacio-sm); }
+.mb-3 { margin-bottom: var(--espacio-md); }

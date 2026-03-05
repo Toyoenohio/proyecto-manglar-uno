@@ -1,0 +1,34 @@
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Editores de código
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Dependencias (si usas npm en el futuro)
+node_modules/
+package-lock.json
+
+# Build (si usas procesos de build)
+dist/
+build/
+
+# Archivos temporales
+tmp/
+temp/
+
+# Imágenes de prueba (opcional)
+assets/images/*.png
+assets/images/*.jpg
+assets/images/*.gif
+
+# Fuentes (si no son necesarias en el repo)
+assets/fonts/*
+!assets/fonts/.gitkeep
