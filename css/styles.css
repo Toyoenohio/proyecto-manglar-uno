@@ -1,31 +1,56 @@
 /* ========================================
+   Proyecto Manglar Uno - Academic App
+   Mobile-Only Design
+   ======================================== */
+
+/* ========================================
    Variables CSS
    ======================================== */
 :root {
-    /* Colores */
-    --color-primario: #29ABE2;
-    --color-secundario: #1A1F2B;
-    --color-acento: #F9F9FB;
-    --color-texto: #333333;
-    --color-blanco: #FFFFFF;
-    --color-gris: #666666;
+    /* Colores principales */
+    --color-primario: #1E6CEB;
+    --color-primario-dark: #1551B8;
+    --blanco: #FFFFFF;
+    --gris-oscuro: #1A1F28;
+    --gris-medio: #6C757D;
+    --gris-claro: #F0F4F8;
+    
+    /* Colores de estados */
+    --rojo-alerta: #E53E3E;
+    --rojo-claro: #FFE6E6;
+    --verde-exito: #059669;
+    --verde-claro: #ECFDF5;
+    --amarillo-advertencia: #92400E;
+    --amarillo-claro: #FEF9C3;
+    
+    /* Colores de iconos */
+    --naranja-materia: #FF9E4D;
+    --azul-claro-materia: #E3F2FD;
+    --azul-quiz: #4299E1;
     
     /* Tipografía */
-    --fuente-principal: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    --fuente-titulos: 'Georgia', serif;
+    --fuente-principal: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     
-    /* Espaciado */
-    --espacio-xs: 0.5rem;
-    --espacio-sm: 1rem;
-    --espacio-md: 2rem;
-    --espacio-lg: 4rem;
+    /* Espaciado (baseline 8px) */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 32px;
     
     /* Border Radius */
-    --border-radius: 8px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-full: 9999px;
     
     /* Sombras */
-    --sombra-suave: 0 2px 10px rgba(0, 0, 0, 0.1);
-    --sombra-media: 0 4px 20px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 /* ========================================
@@ -38,292 +63,624 @@
 }
 
 html {
-    scroll-behavior: smooth;
+    font-size: 16px;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 body {
     font-family: var(--fuente-principal);
-    color: var(--color-texto);
-    line-height: 1.6;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 var(--espacio-sm);
+    background-color: var(--gris-claro);
+    color: var(--gris-oscuro);
+    line-height: 1.5;
+    overflow-x: hidden;
 }
 
 /* ========================================
-   Header & Navegación
+   Mobile Container
+   ======================================== */
+.mobile-container {
+    max-width: 428px; /* iPhone 14 Pro max width */
+    margin: 0 auto;
+    background-color: var(--gris-claro);
+    min-height: 100vh;
+    position: relative;
+    padding-bottom: 84px; /* Space for bottom nav */
+}
+
+/* ========================================
+   Header
    ======================================== */
 .header {
-    background-color: var(--color-blanco);
-    box-shadow: var(--sombra-suave);
-    position: fixed;
-    width: 100%;
+    background-color: var(--blanco);
+    padding: var(--space-4) var(--space-4) var(--space-3);
+    padding-top: max(var(--space-4), env(safe-area-inset-top));
+    position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 100;
+    box-shadow: var(--shadow-sm);
 }
 
-.navbar {
-    padding: var(--espacio-sm) 0;
-}
-
-.navbar .container {
+.header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--color-primario);
-    text-decoration: none;
-    font-family: var(--fuente-titulos);
-}
-
-.nav-menu {
+.header-left {
     display: flex;
-    list-style: none;
-    gap: var(--espacio-md);
+    align-items: center;
+    gap: var(--space-3);
 }
 
-.nav-link {
-    text-decoration: none;
-    color: var(--color-secundario);
-    font-weight: 500;
-    transition: color 0.3s ease;
+.avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    border: 2px solid var(--color-primario);
+    flex-shrink: 0;
 }
 
-.nav-link:hover {
-    color: var(--color-primario);
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-.menu-toggle {
-    display: none;
+.greeting {
+    display: flex;
     flex-direction: column;
-    background: none;
-    border: none;
-    cursor: pointer;
-    gap: 5px;
+    gap: 2px;
 }
 
-.menu-toggle span {
-    width: 25px;
-    height: 3px;
-    background-color: var(--color-secundario);
-    transition: all 0.3s ease;
+.greeting-small {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--gris-medio);
+    line-height: 1.4;
+}
+
+.greeting-large {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gris-oscuro);
+    line-height: 1.2;
+}
+
+.notification-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    color: var(--gris-medio);
+    transition: background-color 0.2s ease;
+}
+
+.notification-btn:active {
+    background-color: var(--gris-claro);
+}
+
+.notification-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+.notification-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 12px;
+    height: 12px;
+    background-color: var(--rojo-alerta);
+    border-radius: var(--radius-full);
+    border: 2px solid var(--blanco);
 }
 
 /* ========================================
-   Hero Section
+   Main Content
    ======================================== */
-.hero {
-    background: linear-gradient(135deg, var(--color-primario), var(--color-secundario));
-    color: var(--color-blanco);
-    padding: var(--espacio-lg) 0;
-    text-align: center;
-    margin-top: 60px;
-    min-height: 80vh;
+.main-content {
+    padding: var(--space-5) var(--space-4);
+}
+
+/* ========================================
+   Academic Card
+   ======================================== */
+.academic-card {
+    background: linear-gradient(135deg, var(--color-primario), var(--color-primario-dark));
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    color: var(--blanco);
+    box-shadow: var(--shadow-md);
+    margin-bottom: var(--space-6);
+}
+
+.academic-header {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-5);
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 8px;
+    border-radius: var(--radius-xl);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.badge-white {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--blanco);
+}
+
+.badge-subject {
+    background-color: rgba(255, 255, 255, 0.26);
+    color: var(--blanco);
+    padding: 4px 10px;
+}
+
+.growth-indicator {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--blanco);
+    opacity: 0.95;
+}
+
+.academic-body {
+    text-align: center;
+    margin-bottom: var(--space-5);
+}
+
+.grade-large {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: var(--space-2);
+}
+
+.grade-number {
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--blanco);
+}
+
+.grade-total {
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--blanco);
+    opacity: 0.9;
+}
+
+.grade-subtitle {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--blanco);
+    opacity: 0.95;
+}
+
+.academic-footer {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
 }
 
-.hero h1 {
-    font-size: 3rem;
-    font-family: var(--fuente-titulos);
-    margin-bottom: var(--espacio-sm);
+.subjects-badges {
+    display: flex;
+    gap: 6px;
 }
 
-.hero-subtitle {
-    font-size: 1.25rem;
-    margin-bottom: var(--espacio-md);
+.link-details {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--blanco);
+    text-decoration: underline;
+    text-underline-offset: 3px;
     opacity: 0.9;
 }
 
 /* ========================================
-   Botones
+   Sections
    ======================================== */
-.btn {
-    padding: 12px 30px;
-    border: none;
-    border-radius: var(--border-radius);
-    font-size: 1rem;
+.section {
+    margin-bottom: var(--space-6);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-4);
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gris-oscuro);
+    line-height: 1.2;
+}
+
+.link-view-all {
+    font-size: 14px;
     font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    color: var(--color-primario);
     text-decoration: none;
-    display: inline-block;
 }
 
-.btn-primary {
-    background-color: var(--color-blanco);
-    color: var(--color-primario);
-}
-
-.btn-primary:hover {
-    background-color: var(--color-acento);
-    transform: translateY(-2px);
-    box-shadow: var(--sombra-media);
+.link-view-all:active {
+    opacity: 0.7;
 }
 
 /* ========================================
-   Secciones
+   Assignments Scroll (Horizontal)
    ======================================== */
-.about,
-.services,
-.contact {
-    padding: var(--espacio-lg) 0;
+.assignments-scroll {
+    display: flex;
+    gap: var(--space-3);
+    overflow-x: auto;
+    padding-bottom: var(--space-2);
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
 }
 
-.about {
-    background-color: var(--color-acento);
+.assignments-scroll::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
 }
 
-.services {
-    background-color: var(--color-blanco);
+.assignment-card {
+    flex: 0 0 280px;
+    background-color: var(--blanco);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    display: flex;
+    gap: var(--space-3);
+    box-shadow: var(--shadow-sm);
+    scroll-snap-align: start;
 }
 
-.contact {
-    background-color: var(--color-acento);
+.assignment-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
-section h2 {
-    text-align: center;
-    font-size: 2.5rem;
-    font-family: var(--fuente-titulos);
-    color: var(--color-secundario);
-    margin-bottom: var(--espacio-md);
+.assignment-icon.math {
+    background-color: var(--naranja-materia);
 }
 
-/* ========================================
-   Servicios Grid
-   ======================================== */
-.services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--espacio-md);
-    margin-top: var(--espacio-md);
+.assignment-icon.essay {
+    background-color: var(--azul-claro-materia);
 }
 
-.service-card {
-    background-color: var(--color-blanco);
-    padding: var(--espacio-md);
-    border-radius: var(--border-radius);
-    box-shadow: var(--sombra-suave);
-    text-align: center;
-    transition: transform 0.3s ease;
+.assignment-icon.quiz {
+    background-color: var(--azul-quiz);
 }
 
-.service-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--sombra-media);
+.assignment-icon svg {
+    width: 24px;
+    height: 24px;
 }
 
-.service-card h3 {
-    color: var(--color-primario);
-    margin-bottom: var(--espacio-xs);
+.assignment-content {
+    flex: 1;
+    min-width: 0;
 }
 
-/* ========================================
-   Formulario de Contacto
-   ======================================== */
-.contact-form {
-    max-width: 600px;
-    margin: 0 auto;
-    background-color: var(--color-blanco);
-    padding: var(--espacio-md);
-    border-radius: var(--border-radius);
-    box-shadow: var(--sombra-suave);
-}
-
-.form-group {
-    margin-bottom: var(--espacio-sm);
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: var(--espacio-xs);
+.assignment-title {
+    font-size: 16px;
     font-weight: 600;
-    color: var(--color-secundario);
+    color: var(--gris-oscuro);
+    line-height: 1.3;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.form-group input,
-.form-group textarea {
+.assignment-subject {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gris-medio);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--space-2);
+}
+
+.assignment-footer {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.badge-urgent-time {
+    background-color: var(--rojo-claro);
+    color: var(--rojo-alerta);
+    padding: 4px 8px;
+    border-radius: var(--radius-xl);
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.badge-urgent {
+    background-color: var(--rojo-alerta);
+    color: var(--blanco);
+    padding: 4px 8px;
+    border-radius: var(--radius-xl);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.badge-date {
+    background-color: var(--gris-claro);
+    color: var(--gris-medio);
+    padding: 4px 8px;
+    border-radius: var(--radius-xl);
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.badge-date svg {
+    width: 12px;
+    height: 12px;
+}
+
+/* Placeholder card for scroll hint */
+.assignment-card-placeholder {
+    opacity: 0.6;
+}
+
+/* ========================================
+   Grades List (Vertical)
+   ======================================== */
+.grades-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.grade-card {
+    background-color: var(--blanco);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    box-shadow: var(--shadow-sm);
+}
+
+.grade-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full);
+    background-color: var(--gris-claro);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.grade-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.grade-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.grade-subject-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gris-oscuro);
+    line-height: 1.3;
+    margin-bottom: 2px;
+}
+
+.grade-activity {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--gris-medio);
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.grade-score {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+    padding: 8px 12px;
+    border-radius: var(--radius-xl);
+    flex-shrink: 0;
+}
+
+.grade-score-high {
+    background-color: var(--verde-claro);
+    color: var(--verde-exito);
+}
+
+.grade-score-medium {
+    background-color: var(--amarillo-claro);
+    color: var(--amarillo-advertencia);
+}
+
+.grade-score-low {
+    background-color: var(--rojo-claro);
+    color: var(--rojo-alerta);
+}
+
+/* ========================================
+   Bottom Spacer
+   ======================================== */
+.bottom-spacer {
+    height: var(--space-4);
+}
+
+/* ========================================
+   Bottom Navigation
+   ======================================== */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
     width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: var(--border-radius);
-    font-size: 1rem;
-    font-family: var(--fuente-principal);
-    transition: border-color 0.3s ease;
+    max-width: 428px;
+    background-color: var(--blanco);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: var(--space-2) 0;
+    padding-bottom: max(var(--space-2), env(safe-area-inset-bottom));
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    z-index: 1000;
 }
 
-.form-group input:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: var(--color-primario);
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: var(--space-2) var(--space-3);
+    text-decoration: none;
+    color: var(--gris-medio);
+    transition: color 0.2s ease;
+    min-width: 64px;
+}
+
+.nav-item svg {
+    width: 24px;
+    height: 24px;
+    transition: stroke 0.2s ease;
+}
+
+.nav-item span {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.nav-item.active {
+    color: var(--color-primario);
+}
+
+.nav-item.active svg {
+    stroke: var(--color-primario);
+}
+
+.nav-item:active {
+    opacity: 0.7;
 }
 
 /* ========================================
-   Footer
+   Animations
    ======================================== */
-.footer {
-    background-color: var(--color-secundario);
-    color: var(--color-blanco);
-    text-align: center;
-    padding: var(--espacio-md) 0;
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
+.academic-card,
+.assignment-card,
+.grade-card {
+    animation: fadeIn 0.4s ease-out;
+}
+
+.assignment-card:nth-child(1) { animation-delay: 0.1s; }
+.assignment-card:nth-child(2) { animation-delay: 0.2s; }
+.assignment-card:nth-child(3) { animation-delay: 0.3s; }
+
+.grade-card:nth-child(1) { animation-delay: 0.1s; }
+.grade-card:nth-child(2) { animation-delay: 0.2s; }
+.grade-card:nth-child(3) { animation-delay: 0.3s; }
+.grade-card:nth-child(4) { animation-delay: 0.4s; }
+
 /* ========================================
-   Responsive Design
+   Safe Area Support (iPhone X+)
    ======================================== */
-@media (max-width: 768px) {
-    .menu-toggle {
-        display: flex;
+@supports (padding: max(0px)) {
+    .header {
+        padding-left: max(var(--space-4), env(safe-area-inset-left));
+        padding-right: max(var(--space-4), env(safe-area-inset-right));
     }
     
-    .nav-menu {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background-color: var(--color-blanco);
-        flex-direction: column;
-        padding: var(--espacio-sm);
-        box-shadow: var(--sombra-suave);
-        display: none;
+    .main-content {
+        padding-left: max(var(--space-4), env(safe-area-inset-left));
+        padding-right: max(var(--space-4), env(safe-area-inset-right));
     }
     
-    .nav-menu.active {
-        display: flex;
-    }
-    
-    .hero h1 {
-        font-size: 2rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 1rem;
-    }
-    
-    section h2 {
-        font-size: 2rem;
+    .bottom-nav {
+        padding-left: max(var(--space-2), env(safe-area-inset-left));
+        padding-right: max(var(--space-2), env(safe-area-inset-right));
     }
 }
 
 /* ========================================
-   Utilidades
+   Active States & Interactions
+   ======================================== */
+.assignment-card:active,
+.grade-card:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+}
+
+.link-details:active,
+.link-view-all:active {
+    opacity: 0.7;
+}
+
+/* ========================================
+   Utility Classes
    ======================================== */
 .text-center {
     text-align: center;
 }
 
-.mt-1 { margin-top: var(--espacio-xs); }
-.mt-2 { margin-top: var(--espacio-sm); }
-.mt-3 { margin-top: var(--espacio-md); }
+.hidden {
+    display: none;
+}
 
-.mb-1 { margin-bottom: var(--espacio-xs); }
-.mb-2 { margin-bottom: var(--espacio-sm); }
-.mb-3 { margin-bottom: var(--espacio-md); }
+/* ========================================
+   Print Styles
+   ======================================== */
+@media print {
+    .bottom-nav,
+    .notification-btn,
+    .header {
+        display: none;
+    }
+}

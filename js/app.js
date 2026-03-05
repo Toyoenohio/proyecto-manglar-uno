@@ -1,145 +1,91 @@
 /**
  * ========================================
- * Proyecto Manglar Uno - JavaScript
+ * Proyecto Manglar Uno - Academic App
+ * Mobile-Only JavaScript
  * ========================================
- * Funcionalidades principales de la webapp
  */
 
 // ========================================
 // Esperar a que el DOM esté cargado
 // ========================================
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Manglar Uno - Webapp cargada correctamente');
+    console.log('🎓 Academic App - Cargada correctamente');
     
-    // Inicializar todas las funcionalidades
-    initNavigation();
-    initHeroButton();
-    initContactForm();
-    initScrollEffects();
+    // Inicializar funcionalidades
+    initBottomNav();
+    initNotificationBtn();
+    initScrollAnimations();
+    initPullToRefresh();
+    initCardInteractions();
 });
 
 // ========================================
-// Navegación Móvil
+// Bottom Navigation
 // ========================================
-function initNavigation() {
-    const menuToggle = document.querySelector('.menu-toggle');
-    const navMenu = document.querySelector('.nav-menu');
-    const navLinks = document.querySelectorAll('.nav-link');
+function initBottomNav() {
+    const navItems = document.querySelectorAll('.nav-item');
     
-    // Toggle menú móvil
-    if (menuToggle) {
-        menuToggle.addEventListener('click', function() {
-            navMenu.classList.toggle('active');
-            
-            // Animación del icono hamburguesa
-            const spans = menuToggle.querySelectorAll('span');
-            if (navMenu.classList.contains('active')) {
-                spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
-                spans[1].style.opacity = '0';
-                spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
-            } else {
-                spans[0].style.transform = 'none';
-                spans[1].style.opacity = '1';
-                spans[2].style.transform = 'none';
-            }
-        });
-    }
-    
-    // Cerrar menú al hacer click en un link
-    navLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            navMenu.classList.remove('active');
-            const spans = menuToggle.querySelectorAll('span');
-            spans[0].style.transform = 'none';
-            spans[1].style.opacity = '1';
-            spans[2].style.transform = 'none';
-        });
-    });
-}
-
-// ========================================
-// Botón del Hero
-// ========================================
-function initHeroButton() {
-    const heroBtn = document.getElementById('heroBtn');
-    
-    if (heroBtn) {
-        heroBtn.addEventListener('click', function() {
-            // Scroll suave a la sección de servicios
-            document.querySelector('#servicios').scrollIntoView({
-                behavior: 'smooth'
-            });
-        });
-    }
-}
-
-// ========================================
-// Formulario de Contacto
-// ========================================
-function initContactForm() {
-    const contactForm = document.getElementById('contactForm');
-    
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
+    navItems.forEach(item => {
+        item.addEventListener('click', function(e) {
             e.preventDefault();
             
-            // Obtener datos del formulario
-            const formData = {
-                nombre: document.getElementById('nombre').value,
-                email: document.getElementById('email').value,
-                mensaje: document.getElementById('mensaje').value
-            };
+            // Remover active de todos
+            navItems.forEach(nav => nav.classList.remove('active'));
             
-            // Validación básica
-            if (!formData.nombre || !formData.email || !formData.mensaje) {
-                showAlert('Por favor completa todos los campos', 'error');
-                return;
+            // Agregar active al actual
+            this.classList.add('active');
+            
+            // Feedback háptico (si está disponible en mobile)
+            if (navigator.vibrate) {
+                navigator.vibrate(10);
             }
             
-            // Validar email
-            if (!isValidEmail(formData.email)) {
-                showAlert('Por favor ingresa un email válido', 'error');
-                return;
+            // Aquí iría la navegación real
+            const section = this.querySelector('span').textContent.toLowerCase();
+            console.log('📍 Navegando a:', section);
+            
+            // Ejemplo: scroll a diferentes secciones
+            if (section === 'inicio') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    });
+}
+
+// ========================================
+// Botón de Notificaciones
+// ========================================
+function initNotificationBtn() {
+    const notificationBtn = document.querySelector('.notification-btn');
+    
+    if (notificationBtn) {
+        notificationBtn.addEventListener('click', function() {
+            console.log('🔔 Notificaciones abiertas');
+            
+            // Feedback háptico
+            if (navigator.vibrate) {
+                navigator.vibrate([10, 30, 10]);
             }
             
-            // Simular envío (aquí iría tu lógica real de envío)
-            console.log('📧 Datos del formulario:', formData);
+            // Mostrar badge de notificaciones (ejemplo)
+            const badge = this.querySelector('.notification-badge');
+            if (badge) {
+                badge.style.animation = 'pulse 0.5s ease';
+                setTimeout(() => {
+                    badge.style.animation = '';
+                }, 500);
+            }
             
-            // Mostrar mensaje de éxito
-            showAlert('¡Mensaje enviado correctamente! Te contactaremos pronto.', 'success');
-            
-            // Resetear formulario
-            contactForm.reset();
-            
-            // Aquí podrías agregar:
-            // - Envío a API real con fetch()
-            // - Integración con EmailJS, Formspree, etc.
-            // - Guardar en localStorage
+            // Aquí iría la apertura del modal de notificaciones
+            showAlert('🔔 3 notificaciones nuevas', 'info');
         });
     }
 }
 
 // ========================================
-// Efectos de Scroll
+// Animaciones de Scroll
 // ========================================
-function initScrollEffects() {
-    // Header cambia de estilo al hacer scroll
-    const header = document.querySelector('.header');
-    let lastScroll = 0;
-    
-    window.addEventListener('scroll', function() {
-        const currentScroll = window.pageYOffset;
-        
-        if (currentScroll > 100) {
-            header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.15)';
-        } else {
-            header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
-        }
-        
-        lastScroll = currentScroll;
-    });
-    
-    // Animación de aparición al hacer scroll
+function initScrollAnimations() {
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
@@ -150,17 +96,120 @@ function initScrollEffects() {
             if (entry.isIntersecting) {
                 entry.target.style.opacity = '1';
                 entry.target.style.transform = 'translateY(0)';
+                observer.unobserve(entry.target);
             }
         });
     }, observerOptions);
     
-    // Observar elementos para animar
-    const elementsToAnimate = document.querySelectorAll('.service-card, .form-group');
-    elementsToAnimate.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
+    // Observar cards
+    const cards = document.querySelectorAll('.assignment-card, .grade-card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = `opacity 0.4s ease ${index * 0.1}s, transform 0.4s ease ${index * 0.1}s`;
+        observer.observe(card);
+    });
+}
+
+// ========================================
+// Pull to Refresh (Simulado)
+// ========================================
+function initPullToRefresh() {
+    let startY = 0;
+    let currentY = 0;
+    let isPulling = false;
+    
+    document.addEventListener('touchstart', function(e) {
+        if (window.scrollY === 0) {
+            startY = e.touches[0].clientY;
+            isPulling = true;
+        }
+    }, { passive: true });
+    
+    document.addEventListener('touchmove', function(e) {
+        if (!isPulling) return;
+        
+        currentY = e.touches[0].clientY;
+        const diff = currentY - startY;
+        
+        if (diff > 0 && diff < 150) {
+            // Efecto visual de pull
+            document.body.style.transform = `translateY(${diff * 0.3}px)`;
+            document.body.style.transition = 'transform 0.1s ease';
+        }
+    }, { passive: true });
+    
+    document.addEventListener('touchend', function() {
+        if (!isPulling) return;
+        
+        const diff = currentY - startY;
+        
+        if (diff > 100) {
+            // Refresh trigger
+            console.log('🔄 Refreshing...');
+            showAlert('🔄 Actualizando...', 'info');
+            
+            // Simular carga
+            setTimeout(() => {
+                document.body.style.transform = '';
+                document.body.style.transition = '';
+                showAlert('✅ Actualizado', 'success');
+            }, 1500);
+        } else {
+            // Reset
+            document.body.style.transform = '';
+            document.body.style.transition = '';
+        }
+        
+        isPulling = false;
+        startY = 0;
+        currentY = 0;
+    });
+}
+
+// ========================================
+// Interacciones con Cards
+// ========================================
+function initCardInteractions() {
+    // Assignment cards - click para ver detalles
+    const assignmentCards = document.querySelectorAll('.assignment-card');
+    
+    assignmentCards.forEach(card => {
+        card.addEventListener('click', function() {
+            const title = this.querySelector('.assignment-title')?.textContent;
+            console.log('📚 Viendo detalles de:', title);
+            
+            // Feedback háptico
+            if (navigator.vibrate) {
+                navigator.vibrate(20);
+            }
+            
+            // Aquí iría la navegación al detalle
+            if (title) {
+                showAlert(`📖 ${title}`, 'info');
+            }
+        });
+    });
+    
+    // Grade cards - click para ver detalles
+    const gradeCards = document.querySelectorAll('.grade-card');
+    
+    gradeCards.forEach(card => {
+        card.addEventListener('click', function() {
+            const subject = this.querySelector('.grade-subject-name')?.textContent;
+            const score = this.querySelector('.grade-score')?.textContent;
+            console.log('📊 Nota de', subject, ':', score);
+            
+            // Feedback háptico
+            if (navigator.vibrate) {
+                navigator.vibrate(20);
+            }
+            
+            // Aquí iría la navegación al detalle
+            if (subject && score) {
+                showAlert(`📊 ${subject}: ${score}`, 'info');
+            }
+        });
     });
 }
 
@@ -168,103 +217,190 @@ function initScrollEffects() {
 // Utilidades
 // ========================================
 
-// Validar email
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
-
-// Mostrar alertas
+// Mostrar alertas toast
 function showAlert(message, type = 'info') {
+    // Remover alertas existentes
+    const existingAlert = document.querySelector('.toast-alert');
+    if (existingAlert) {
+        existingAlert.remove();
+    }
+    
     // Crear elemento de alerta
     const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type}`;
+    alertDiv.className = `toast-alert toast-${type}`;
     alertDiv.textContent = message;
+    
+    // Estilos
+    const bgColor = type === 'success' ? '#059669' : 
+                    type === 'error' ? '#E53E3E' : 
+                    '#1E6CEB';
+    
     alertDiv.style.cssText = `
         position: fixed;
         top: 80px;
-        right: 20px;
-        padding: 15px 25px;
-        border-radius: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: ${bgColor};
         color: white;
+        padding: 12px 24px;
+        border-radius: 24px;
+        font-size: 14px;
         font-weight: 500;
         z-index: 9999;
-        animation: slideIn 0.3s ease;
-        ${type === 'success' ? 'background-color: #4CAF50;' : ''}
-        ${type === 'error' ? 'background-color: #f44336;' : ''}
-        ${type === 'info' ? 'background-color: #2196F3;' : ''}
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideDown 0.3s ease;
+        max-width: 90%;
+        text-align: center;
     `;
     
     // Agregar al DOM
     document.body.appendChild(alertDiv);
     
-    // Remover después de 3 segundos
+    // Remover después de 2.5 segundos
     setTimeout(() => {
-        alertDiv.style.animation = 'slideOut 0.3s ease';
+        alertDiv.style.animation = 'slideUp 0.3s ease';
         setTimeout(() => {
             alertDiv.remove();
         }, 300);
-    }, 3000);
+    }, 2500);
 }
 
 // Agregar animaciones CSS dinámicamente
 const style = document.createElement('style');
 style.textContent = `
-    @keyframes slideIn {
+    @keyframes slideDown {
         from {
-            transform: translateX(100%);
+            transform: translateX(-50%) translateY(-20px);
             opacity: 0;
         }
         to {
-            transform: translateX(0);
+            transform: translateX(-50%) translateY(0);
             opacity: 1;
         }
     }
     
-    @keyframes slideOut {
+    @keyframes slideUp {
         from {
-            transform: translateX(0);
+            transform: translateX(-50%) translateY(0);
             opacity: 1;
         }
         to {
-            transform: translateX(100%);
+            transform: translateX(-50%) translateY(-20px);
             opacity: 0;
+        }
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.2);
         }
     }
 `;
 document.head.appendChild(style);
 
 // ========================================
-// Funciones adicionales (para usar cuando necesites)
+// Funciones adicionales para el futuro
 // ========================================
 
-// Ejemplo: Fetch a API
-async function fetchData(url) {
-    try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Error en la respuesta');
-        return await response.json();
-    } catch (error) {
-        console.error('Error:', error);
-        showAlert('Error al cargar datos', 'error');
-        return null;
+// Actualizar badge de notificaciones
+function updateNotificationBadge(count) {
+    const badge = document.querySelector('.notification-badge');
+    if (badge) {
+        if (count > 0) {
+            badge.style.display = 'block';
+            badge.setAttribute('aria-label', `${count} notificaciones`);
+        } else {
+            badge.style.display = 'none';
+        }
     }
 }
 
-// Ejemplo: Guardar en localStorage
-function saveToStorage(key, data) {
-    localStorage.setItem(key, JSON.stringify(data));
+// Actualizar notas dinámicamente
+function updateGrade(subject, newScore) {
+    const gradeCards = document.querySelectorAll('.grade-card');
+    
+    gradeCards.forEach(card => {
+        const subjectName = card.querySelector('.grade-subject-name')?.textContent;
+        if (subjectName === subject) {
+            const scoreElement = card.querySelector('.grade-score');
+            if (scoreElement) {
+                // Animación de actualización
+                scoreElement.style.transform = 'scale(1.2)';
+                scoreElement.style.transition = 'transform 0.2s ease';
+                
+                setTimeout(() => {
+                    scoreElement.textContent = newScore;
+                    scoreElement.style.transform = 'scale(1)';
+                    
+                    // Actualizar color según nota
+                    scoreElement.classList.remove('grade-score-high', 'grade-score-medium', 'grade-score-low');
+                    
+                    if (newScore >= 18) {
+                        scoreElement.classList.add('grade-score-high');
+                    } else if (newScore >= 15) {
+                        scoreElement.classList.add('grade-score-medium');
+                    } else {
+                        scoreElement.classList.add('grade-score-low');
+                    }
+                }, 200);
+            }
+        }
+    });
 }
 
-// Ejemplo: Leer de localStorage
-function getFromStorage(key) {
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : null;
+// Agregar nueva entrega
+function addAssignment(data) {
+    const scrollContainer = document.querySelector('.assignments-scroll');
+    
+    if (scrollContainer) {
+        const newCard = document.createElement('div');
+        newCard.className = 'assignment-card';
+        newCard.innerHTML = `
+            <div class="assignment-icon ${data.iconClass || 'quiz'}">
+                ${data.iconSVG || '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>'}
+            </div>
+            <div class="assignment-content">
+                <h3 class="assignment-title">${data.title}</h3>
+                <p class="assignment-subject">${data.subject}</p>
+                <div class="assignment-footer">
+                    <span class="badge badge-date">${data.date}</span>
+                </div>
+            </div>
+        `;
+        
+        // Insertar al principio
+        scrollContainer.insertBefore(newCard, scrollContainer.firstChild);
+        
+        // Scroll automático para mostrar la nueva card
+        scrollContainer.scrollTo({ left: 0, behavior: 'smooth' });
+    }
 }
 
-// Ejemplo: Dark Mode Toggle
-function toggleDarkMode() {
-    document.body.classList.toggle('dark-mode');
-    const isDark = document.body.classList.contains('dark-mode');
-    saveToStorage('darkMode', isDark);
+// ========================================
+// Service Worker Register (para PWA)
+// ========================================
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        // navigator.serviceWorker.register('/sw.js').then(function(registration) {
+        //     console.log('ServiceWorker registration successful:', registration.scope);
+        // }, function(err) {
+        //     console.log('ServiceWorker registration failed:', err);
+        // });
+    });
 }
+
+// ========================================
+// Online/Offline Detection
+// ========================================
+window.addEventListener('online', function() {
+    console.log('🌐 Online');
+    showAlert('🌐 Conexión restablecida', 'success');
+});
+
+window.addEventListener('offline', function() {
+    console.log('❌ Offline');
+    showAlert('❌ Sin conexión', 'error');
+});

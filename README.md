@@ -1,35 +1,61 @@
-# 🌿 Proyecto Manglar Uno
+# 🎓 Academic App - Mobile-Only
 
-Webapp básica construida con HTML, CSS y JavaScript puro (sin frameworks).
-
----
-
-## 📋 **Descripción**
-
-Proyecto Manglar Uno es una plantilla web moderna y responsive, lista para personalizar. Incluye:
-
-- ✅ Diseño responsive (móvil, tablet, desktop)
-- ✅ Navegación con menú hamburguesa para móvil
-- ✅ Secciones pre-configuradas (Inicio, Nosotros, Servicios, Contacto)
-- ✅ Formulario de contacto con validación
-- ✅ Efectos de scroll y animaciones
-- ✅ Código limpio y comentado
+Aplicación móvil académica replicada fielmente desde diseño. Construida con **HTML, CSS y JavaScript puro** (sin frameworks).
 
 ---
 
-## 🚀 **Estructura del Proyecto**
+## 📱 **Mobile-Only Design**
+
+Esta webapp está diseñada **exclusivamente para móviles**. El contenedor principal está limitado a 428px (iPhone 14 Pro Max) para garantizar la mejor experiencia en dispositivos móviles.
+
+---
+
+## 🚀 **Vista Previa**
+
+### **Features Visuales:**
+
+| Elemento | Descripción |
+|----------|-------------|
+| **Header** | Avatar, saludo personalizado, botón de notificaciones con badge |
+| **Tarjeta Académica** | Gradiente azul, promedio 18/20, badges de materias |
+| **Próximas Entregas** | Scroll horizontal, cards con iconos de colores |
+| **Últimas Notas** | Lista vertical, notas con colores por rendimiento |
+| **Bottom Nav** | 4 íconos (Inicio, Notas, Calendario, Perfil) |
+
+---
+
+## 🎨 **Paleta de Colores**
+
+```css
+--color-primario: #1E6CEB;         /* Azul principal */
+--blanco: #FFFFFF;                  /* Blanco */
+--gris-oscuro: #1A1F28;             /* Texto principal */
+--gris-medio: #6C757D;              /* Texto secundario */
+--gris-claro: #F0F4F8;              /* Fondo */
+
+--rojo-alerta: #E53E3E;             /* Urgente */
+--verde-exito: #059669;             /* Notas altas (≥18) */
+--amarillo-advertencia: #92400E;    /* Notas medias (15-17) */
+
+--naranja-materia: #FF9E4D;         /* Icono matemáticas */
+--azul-claro-materia: #E3F2FD;      /* Icono ensayo */
+```
+
+---
+
+## 📋 **Estructura del Proyecto**
 
 ```
 proyecto-manglar-uno/
-├── index.html              # Página principal
+├── index.html              # Página principal (mobile layout)
 ├── css/
-│   └── styles.css          # Estilos principales
+│   └── styles.css          # Estilos mobile-first
 ├── js/
-│   └── app.js              # JavaScript funcional
+│   └── app.js              # Funcionalidades JavaScript
 ├── assets/
-│   ├── images/             # Imágenes del proyecto
-│   └── fonts/              # Fuentes personalizadas
-└── README.md               # Este archivo
+│   ├── images/             # Imágenes (avatars, icons)
+│   └── fonts/              # Fuentes (Inter de Google Fonts)
+└── README.md               # Documentación
 ```
 
 ---
@@ -45,69 +71,81 @@ cd proyecto-manglar-uno
 
 ### **2. Abrir en el navegador**
 
-Simplemente abre el archivo `index.html` en tu navegador:
-
+**Opción A: Directo (recomendado para mobile)**
 ```bash
-# Opción 1: Doble click en el archivo
-# Opción 2: Desde terminal
-open index.html          # macOS
-start index.html         # Windows
-xdg-open index.html      # Linux
+# Abrir en Chrome DevTools mobile
+# F12 → Toggle device toolbar (Ctrl+Shift+M) → Seleccionar iPhone 14 Pro
+```
 
-# Opción 3: Usar un servidor local (recomendado)
+**Opción B: Servidor local**
+```bash
+# Usar http-server
 npx http-server -p 3000
+
+# O usar Python
+python -m http.server 3000
+
 # Luego abrir: http://localhost:3000
 ```
 
----
-
-## 🎨 **Personalización**
-
-### **Colores**
-
-Edita las variables CSS en `css/styles.css`:
-
-```css
-:root {
-    --color-primario: #29ABE2;      /* Color principal (azul) */
-    --color-secundario: #1A1F2B;    /* Color secundario (oscuro) */
-    --color-acento: #F9F9FB;        /* Color de acento (claro) */
-    --color-texto: #333333;         /* Color de texto */
-    --color-blanco: #FFFFFF;        /* Blanco */
-}
+**Opción C: Live Server (VS Code)**
 ```
-
-### **Tipografía**
-
-```css
-:root {
-    --fuente-principal: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    --fuente-titulos: 'Georgia', serif;
-}
+# Instalar extensión "Live Server"
+# Click derecho en index.html → "Open with Live Server"
 ```
-
-### **Contenido**
-
-Edita `index.html` para cambiar:
-
-- Textos de las secciones
-- Enlaces de navegación
-- Campos del formulario
-- Información de contacto
 
 ---
 
-## 📱 **Features Incluidas**
+## 📱 **Dispositivos Soportados**
 
-| Feature | Descripción |
-|---------|-------------|
-| **Responsive Design** | Se adapta a móvil, tablet y desktop |
-| **Menú Móvil** | Hamburguesa animada para pantallas pequeñas |
-| **Scroll Suave** | Navegación entre secciones con animación |
-| **Formulario Validado** | Validación de email y campos requeridos |
-| **Alertas** | Notificaciones visuales para el usuario |
-| **Animaciones** | Efectos de aparición al hacer scroll |
-| **Código Limpio** | Comentado y fácil de entender |
+| Dispositivo | Resolución | Estado |
+|-------------|------------|--------|
+| iPhone 14 Pro Max | 428×926 | ✅ Optimizado |
+| iPhone 14 Pro | 393×852 | ✅ Optimizado |
+| iPhone SE | 375×667 | ✅ Optimizado |
+| Samsung Galaxy S23 | 360×780 | ✅ Optimizado |
+| Google Pixel 7 | 412×915 | ✅ Optimizado |
+
+---
+
+## 🎨 **Componentes UI**
+
+### **1. Header**
+- Avatar circular con borde azul
+- Saludo en dos líneas ("¡Bienvenido!" + "Hola, Alejandro")
+- Botón de notificaciones con badge rojo
+
+### **2. Tarjeta Académica**
+- Fondo gradiente azul
+- Badge "Académico"
+- Indicador de crecimiento (+0.2%)
+- Número grande (18/20)
+- Badges de materias (MAT, FIS, HIS)
+- Link "Ver detalles"
+
+### **3. Próximas Entregas**
+- Scroll horizontal
+- Cards con:
+  - Icono de color (naranja, azul, etc.)
+  - Título de la tarea
+  - Materia (en mayúsculas)
+  - Badges de fecha/urgencia
+
+### **4. Últimas Notas**
+- Lista vertical
+- Cards con:
+  - Icono circular gris
+  - Nombre de materia
+  - Actividad
+  - Nota con color codificado:
+    - 🟢 Verde: ≥18 (excelente)
+    - 🟡 Amarillo: 15-17 (regular)
+    - 🔴 Rojo: <15 (mal)
+
+### **5. Bottom Navigation**
+- 4 íconos fijos abajo
+- Estado activo en azul
+- Labels debajo de cada ícono
 
 ---
 
@@ -116,46 +154,37 @@ Edita `index.html` para cambiar:
 ### **Incluidas:**
 
 ```javascript
-// Navegación móvil
-initNavigation()
+// Navegación bottom nav
+initBottomNav()
 
-// Botón del hero (scroll a servicios)
-initHeroButton()
+// Botón de notificaciones
+initNotificationBtn()
 
-// Formulario de contacto
-initContactForm()
+// Animaciones de scroll
+initScrollAnimations()
 
-// Efectos de scroll
-initScrollEffects()
+// Pull to refresh (simulado)
+initPullToRefresh()
+
+// Click en cards
+initCardInteractions()
 
 // Utilidades
-isValidEmail()
 showAlert()
-fetchData()
-saveToStorage()
-getFromStorage()
-toggleDarkMode()
+updateNotificationBadge()
+updateGrade()
+addAssignment()
 ```
 
-### **Para agregar más funcionalidades:**
+### **Características:**
 
-1. **Conectar a una API real:**
-   ```javascript
-   const data = await fetchData('https://api.ejemplo.com/datos');
-   ```
-
-2. **Enviar formulario a un webhook:**
-   ```javascript
-   fetch('https://tu-webhook.com', {
-       method: 'POST',
-       body: JSON.stringify(formData)
-   });
-   ```
-
-3. **Activar Dark Mode:**
-   ```javascript
-   toggleDarkMode();
-   ```
+| Feature | Descripción |
+|---------|-------------|
+| **Feedback háptico** | Vibración en mobile (si soportado) |
+| **Animaciones** | Fade in al hacer scroll |
+| **Pull to refresh** | Simulado con touch events |
+| **Toast alerts** | Notificaciones tipo toast |
+| **Active states** | Cambios visuales al tocar |
 
 ---
 
@@ -166,30 +195,81 @@ toggleDarkMode()
 | Plataforma | URL |
 |------------|-----|
 | **GitHub Pages** | `https://toyoenohio.github.io/proyecto-manglar-uno/` |
-| **Netlify** | Arrastra la carpeta o conecta el repo |
-| **Vercel** | Conecta el repo de GitHub |
-| **Cloudflare Pages** | Conecta el repo de GitHub |
+| **Netlify Drop** | Arrastra la carpeta |
+| **Vercel** | Conecta el repo |
+| **Cloudflare Pages** | Conecta el repo |
 
 ### **Deploy en GitHub Pages:**
 
 ```bash
-# Habilitar GitHub Pages en el repo
 # Settings → Pages → Source: main branch → Save
 
-# O usar la CLI de GitHub
-gh pages deploy
+# URL resultante:
+https://toyoenohio.github.io/proyecto-manglar-uno/
 ```
 
 ---
 
-## 📝 **To-Do / Próximas Mejoras**
+## 📝 **Personalización**
 
-- [ ] Agregar más secciones según necesidad
-- [ ] Integrar con backend real
-- [ ] Agregar más animaciones
-- [ ] Optimizar imágenes
+### **Cambiar colores:**
+
+Edita `css/styles.css`:
+
+```css
+:root {
+    --color-primario: #TU_COLOR;  /* Cambia el azul */
+}
+```
+
+### **Cambiar datos del usuario:**
+
+Edita `index.html`:
+
+```html
+<span class="greeting-large">Hola, TU_NOMBRE</span>
+```
+
+### **Agregar más notas:**
+
+Copia y pega un bloque `.grade-card`:
+
+```html
+<div class="grade-card">
+    <div class="grade-icon">
+        <!-- SVG del icono -->
+    </div>
+    <div class="grade-info">
+        <h3 class="grade-subject-name">Materia</h3>
+        <p class="grade-activity">Actividad</p>
+    </div>
+    <div class="grade-score grade-score-high">19.5</div>
+</div>
+```
+
+---
+
+## 🎯 **To-Do / Próximas Mejoras**
+
+- [ ] Conectar a API real de notas
+- [ ] Agregar más pantallas (Calendario, Perfil)
+- [ ] Implementar modo oscuro
+- [ ] Agregar animaciones de carga
+- [ ] Optimizar imágenes (WebP)
 - [ ] Agregar tests
-- [ ] Implementar dark mode toggle
+
+---
+
+## 📊 **Performance**
+
+| Métrica | Valor |
+|---------|-------|
+| **Tamaño HTML** | ~13 KB |
+| **Tamaño CSS** | ~14 KB |
+| **Tamaño JS** | ~13 KB |
+| **Total** | ~40 KB |
+| **Fonts** | Google Fonts (Inter) |
+| **Imágenes** | SVG inline (sin requests extra) |
 
 ---
 
@@ -205,7 +285,7 @@ gh pages deploy
 
 ## 📄 **Licencia**
 
-Este proyecto es de código abierto. Sentite libre de usarlo y modificarlo.
+Código abierto. Sentite libre de usar y modificar.
 
 ---
 
@@ -217,8 +297,6 @@ Este proyecto es de código abierto. Sentite libre de usarlo y modificarlo.
 
 ## 🙏 **Agradecimientos**
 
-Gracias por usar Proyecto Manglar Uno. ¡Espero que te sea útil! 🌿
+Diseño replicado fielmente desde captura de pantalla proporcionada.
 
----
-
-**Hecho con ❤️ y código limpio**
+**Hecho con ❤️ para mobile**
