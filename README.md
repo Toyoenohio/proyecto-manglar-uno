@@ -18,6 +18,8 @@ Esta webapp está diseñada **exclusivamente para móviles**. El contenedor prin
 |----------|-------------|
 | **Pantalla Principal** (`index.html`) | Dashboard académico con resumen general |
 | **Pantalla de Notas** (`notas.html`) | Gestión completa de calificaciones por materia |
+| **Pantalla de Calendario** (`calendario.html`) | Calendario académico con eventos y navegación |
+| **Pantalla de Perfil** (`perfil.html`) | Perfil del estudiante con estadísticas y configuración |
 | **Header** | Avatar, saludo personalizado, botón de notificaciones con badge |
 | **Tarjeta Académica** | Gradiente azul, promedio 18/20, badges de materias |
 | **Próximas Entregas** | Scroll horizontal, cards con iconos de colores |
@@ -51,12 +53,18 @@ Esta webapp está diseñada **exclusivamente para móviles**. El contenedor prin
 proyecto-manglar-uno/
 ├── index.html              # Página principal (mobile layout)
 ├── notas.html              # Pantalla de Mis Calificaciones
+├── calendario.html         # Pantalla de Calendario Académico
+├── perfil.html             # Pantalla de Perfil del Estudiante
 ├── css/
 │   ├── styles.css          # Estilos mobile-first
-│   └── notas.css           # Estilos específicos para pantalla de notas
+│   ├── notas.css           # Estilos específicos para pantalla de notas
+│   ├── calendario.css      # Estilos específicos para calendario
+│   └── perfil.css          # Estilos específicos para perfil
 ├── js/
 │   ├── app.js              # Funcionalidades JavaScript principales
-│   └── notas.js            # Funcionalidades específicas para notas
+│   ├── notas.js            # Funcionalidades específicas para notas
+│   ├── calendario.js       # Funcionalidades específicas para calendario
+│   └── perfil.js           # Funcionalidades específicas para perfil
 ├── assets/
 │   ├── images/             # Imágenes (avatars, icons)
 │   └── fonts/              # Fuentes (Inter de Google Fonts)
@@ -159,11 +167,39 @@ python -m http.server 3000
 - **Banner "Simulador de Promedio"** (CTA para funcionalidad futura)
 - **Navegación completa** entre pantallas
 
-### **6. Bottom Navigation**
+### **6. Pantalla de Calendario** (`calendario.html`)
+- **Navegación por meses** (botones anterior/siguiente)
+- **Grid de calendario** con días de la semana
+- **Eventos visualizados** con puntos de colores:
+  - 🔴 Rojo: Exámenes
+  - 🔵 Azul: Tareas/Entregas
+  - 🟢 Verde: Clases
+- **Eventos de hoy** con detalles completos
+- **Próximos eventos** destacados
+- **Interacción completa**: selección de días, detalles de eventos
+
+### **7. Pantalla de Perfil** (`perfil.html`)
+- **Header con avatar grande** y botón de edición
+- **Estadísticas del estudiante** (promedio, materias, asistencia, créditos)
+- **Información personal** editable (email, teléfono, carrera, facultad)
+- **Configuración de la app**:
+  - Notificaciones
+  - Privacidad
+  - Modo oscuro (toggle)
+- **Acciones principales**:
+  - Exportar datos (JSON)
+  - Cerrar sesión
+- **Información de la aplicación** (versión, enlaces)
+
+### **8. Bottom Navigation**
 - 4 íconos fijos abajo
 - Estado activo en azul
 - Labels debajo de cada ícono
-- **Navegación funcional** entre `index.html` y `notas.html`
+- **Navegación funcional completa** entre todas las pantallas:
+  - `index.html` → Dashboard principal
+  - `notas.html` → Mis Calificaciones
+  - `calendario.html` → Calendario Académico
+  - `perfil.html` → Perfil del Estudiante
 
 ---
 
@@ -200,6 +236,22 @@ initSimulatorBanner()  // Banner interactivo
 initBackButton()       // Botón de volver
 updateAssessmentScore() // Actualizar notas específicas
 exportGrades()         // Exportar datos a JSON
+
+// Funcionalidades específicas de calendario (calendario.js)
+initCalendarNavigation() // Navegación por meses
+initCalendarDays()      // Interacción con días del calendario
+initEventCards()        // Detalles de eventos
+loadEventsFromAPI()     // Carga de eventos (placeholder para API)
+addCalendarEvent()      // Agregar eventos (para integración futura)
+exportCalendar()        // Exportar calendario (iCal, etc.)
+
+// Funcionalidades específicas de perfil (perfil.js)
+initProfileSettings()   // Configuración del perfil
+initProfileActions()    // Acciones (exportar, cerrar sesión)
+initDarkModeToggle()    // Toggle de modo oscuro
+loadProfileFromAPI()    // Carga de datos del perfil (placeholder)
+updateProfileData()     // Actualización de datos del perfil
+uploadProfilePhoto()    // Subir foto de perfil (para integración futura)
 ```
 
 ### **Características:**
@@ -234,8 +286,10 @@ exportGrades()         // Exportar datos a JSON
 https://toyoenohio.github.io/proyecto-manglar-uno/
 
 # Pantallas disponibles:
-https://toyoenohio.github.io/proyecto-manglar-uno/       # Dashboard principal
-https://toyoenohio.github.io/proyecto-manglar-uno/notas.html  # Mis Calificaciones
+https://toyoenohio.github.io/proyecto-manglar-uno/              # Dashboard principal
+https://toyoenohio.github.io/proyecto-manglar-uno/notas.html    # Mis Calificaciones
+https://toyoenohio.github.io/proyecto-manglar-uno/calendario.html # Calendario Académico
+https://toyoenohio.github.io/proyecto-manglar-uno/perfil.html   # Perfil del Estudiante
 ```
 
 ---
@@ -282,8 +336,9 @@ Copia y pega un bloque `.grade-card`:
 ## 🎯 **To-Do / Próximas Mejoras**
 
 - [x] **Pantalla de Mis Calificaciones** - Completada ✅
-- [ ] Conectar a API real de notas
-- [ ] Agregar más pantallas (Calendario, Perfil)
+- [x] **Pantalla de Calendario** - Completada ✅
+- [x] **Pantalla de Perfil** - Completada ✅
+- [ ] Conectar a API real de notas y calendario
 - [ ] Implementar modo oscuro
 - [ ] Agregar animaciones de carga
 - [ ] Optimizar imágenes (WebP)
@@ -291,6 +346,8 @@ Copia y pega un bloque `.grade-card`:
 - [ ] Implementar Simulador de Promedio funcional
 - [ ] Agregar exportación de notas (PDF/CSV)
 - [ ] Sincronización offline con localStorage
+- [ ] Integración con Google Calendar/Outlook
+- [ ] Notificaciones push para eventos
 
 ---
 
