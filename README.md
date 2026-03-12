@@ -16,11 +16,13 @@ Esta webapp está diseñada **exclusivamente para móviles**. El contenedor prin
 
 | Elemento | Descripción |
 |----------|-------------|
+| **Pantalla Principal** (`index.html`) | Dashboard académico con resumen general |
+| **Pantalla de Notas** (`notas.html`) | Gestión completa de calificaciones por materia |
 | **Header** | Avatar, saludo personalizado, botón de notificaciones con badge |
 | **Tarjeta Académica** | Gradiente azul, promedio 18/20, badges de materias |
 | **Próximas Entregas** | Scroll horizontal, cards con iconos de colores |
 | **Últimas Notas** | Lista vertical, notas con colores por rendimiento |
-| **Bottom Nav** | 4 íconos (Inicio, Notas, Calendario, Perfil) |
+| **Bottom Nav** | 4 íconos (Inicio, Notas, Calendario, Perfil) con navegación completa |
 
 ---
 
@@ -48,10 +50,13 @@ Esta webapp está diseñada **exclusivamente para móviles**. El contenedor prin
 ```
 proyecto-manglar-uno/
 ├── index.html              # Página principal (mobile layout)
+├── notas.html              # Pantalla de Mis Calificaciones
 ├── css/
-│   └── styles.css          # Estilos mobile-first
+│   ├── styles.css          # Estilos mobile-first
+│   └── notas.css           # Estilos específicos para pantalla de notas
 ├── js/
-│   └── app.js              # Funcionalidades JavaScript
+│   ├── app.js              # Funcionalidades JavaScript principales
+│   └── notas.js            # Funcionalidades específicas para notas
 ├── assets/
 │   ├── images/             # Imágenes (avatars, icons)
 │   └── fonts/              # Fuentes (Inter de Google Fonts)
@@ -142,10 +147,23 @@ python -m http.server 3000
     - 🟡 Amarillo: 15-17 (regular)
     - 🔴 Rojo: <15 (mal)
 
-### **5. Bottom Navigation**
+### **5. Pantalla de Mis Calificaciones** (`notas.html`)
+- **Header con botón de volver** y título "Mis Calificaciones"
+- **Barra de búsqueda** para filtrar materias/profesores
+- **Tarjetas de resumen** (Promedio, Materias, Créditos)
+- **Lista de materias expandible** con:
+  - Iconos personalizados por materia
+  - Notas con colores según rendimiento
+  - Profesor asignado
+  - Desglose detallado de evaluaciones (pesos y notas)
+- **Banner "Simulador de Promedio"** (CTA para funcionalidad futura)
+- **Navegación completa** entre pantallas
+
+### **6. Bottom Navigation**
 - 4 íconos fijos abajo
 - Estado activo en azul
 - Labels debajo de cada ícono
+- **Navegación funcional** entre `index.html` y `notas.html`
 
 ---
 
@@ -174,6 +192,14 @@ showAlert()
 updateNotificationBadge()
 updateGrade()
 addAssignment()
+
+// Funcionalidades específicas de notas (notas.js)
+initCourseCards()      // Expandir/colapsar materias
+initSearch()           // Búsqueda en tiempo real
+initSimulatorBanner()  // Banner interactivo
+initBackButton()       // Botón de volver
+updateAssessmentScore() // Actualizar notas específicas
+exportGrades()         // Exportar datos a JSON
 ```
 
 ### **Características:**
@@ -206,6 +232,10 @@ addAssignment()
 
 # URL resultante:
 https://toyoenohio.github.io/proyecto-manglar-uno/
+
+# Pantallas disponibles:
+https://toyoenohio.github.io/proyecto-manglar-uno/       # Dashboard principal
+https://toyoenohio.github.io/proyecto-manglar-uno/notas.html  # Mis Calificaciones
 ```
 
 ---
@@ -251,12 +281,16 @@ Copia y pega un bloque `.grade-card`:
 
 ## 🎯 **To-Do / Próximas Mejoras**
 
+- [x] **Pantalla de Mis Calificaciones** - Completada ✅
 - [ ] Conectar a API real de notas
 - [ ] Agregar más pantallas (Calendario, Perfil)
 - [ ] Implementar modo oscuro
 - [ ] Agregar animaciones de carga
 - [ ] Optimizar imágenes (WebP)
 - [ ] Agregar tests
+- [ ] Implementar Simulador de Promedio funcional
+- [ ] Agregar exportación de notas (PDF/CSV)
+- [ ] Sincronización offline con localStorage
 
 ---
 
