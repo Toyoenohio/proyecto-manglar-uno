@@ -3,6 +3,47 @@
    ======================================== */
 
 /* ========================================
+   Header con botón de volver (consistente con notas.css)
+   ======================================== */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.back-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--gris-oscuro);
+    transition: background-color 0.2s ease;
+    padding: 0;
+}
+
+.back-btn:active {
+    background-color: var(--gris-claro);
+}
+
+.back-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+.page-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gris-oscuro);
+    line-height: 1.2;
+    margin: 0;
+}
+
+/* ========================================
    Profile Header
    ======================================== */
 .profile-header {
