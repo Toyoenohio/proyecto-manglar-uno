@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1E6CEB">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Perfil - Academic App</title>
+    
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Estilos -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/perfil.css">
+</head>
+<body>
+    <!-- Contenedor principal (mobile) -->
+    <div class="mobile-container">
+        
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <button class="back-btn" aria-label="Volver">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"/>
+                        </svg>
+                    </button>
+                    <h1 class="page-title">Perfil</h1>
+                </div>
+                <button class="notification-btn" aria-label="Notificaciones">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                    <span class="notification-badge">1</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-avatar-large">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23E3F2FD'/%3E%3Ctext x='50' y='55' font-size='40' text-anchor='middle' fill='%231E6CEB' font-family='Inter'%3E👤%3C/text%3E%3C/svg%3E\" alt="Avatar">
+                    <button class="edit-avatar-btn" aria-label="Cambiar foto">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="profile-info">
+                    <h2 class="profile-name">Alejandro Rodríguez</h2>
+                    <p class="profile-id">ID: 2023-00123456</p>
+                    <div class="profile-badges">
+                        <span class="badge badge-student">Estudiante</span>
+                        <span class="badge badge-year">4to Año</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Stats -->
+            <div class="profile-stats">
+                <div class="stat-card">
+                    <span class="stat-value">18.2</span>
+                    <span class="stat-label">Promedio</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">6</span>
+                    <span class="stat-label">Materias</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">92%</span>
+                    <span class="stat-label">Asistencia</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">18</span>
+                    <span class="stat-label">Créditos</span>
+                </div>
+            </div>
+
+            <!-- Profile Sections -->
+            <div class="profile-sections">
+                
+                <!-- Información Personal -->
+                <section class="profile-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Información Personal</h3>
+                        <button class="edit-btn" aria-label="Editar información">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Email</span>
+                            <span class="info-value">alejandro.rodriguez@universidad.edu</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Teléfono</span>
+                            <span class="info-value">+1 (555) 123-4567</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Carrera</span>
+                            <span class="info-value">Ingeniería de Sistemas</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Facultad</span>
+                            <span class="info-value">Ingeniería y Tecnología</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Configuración -->
+                <section class="profile-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Configuración</h3>
+                    </div>
+                    <div class="settings-list">
+                        <button class="setting-item">
+                            <div class="setting-left">
+                                <div class="setting-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                                    </svg>
+                                </div>
+                                <div class="setting-info">
+                                    <span class="setting-title">Notificaciones</span>
+                                    <span class="setting-subtitle">Configurar alertas y recordatorios</span>
+                                </div>
+                            </div>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"/>
+                            </svg>
+                        </button>
+                        
+                        <button class="setting-item">
+                            <div class="setting-left">
+                                <div class="setting-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                    </svg>
+                                </div>
+                                <div class="setting-info">
+                                    <span class="setting-title">Privacidad</span>
+                                    <span class="setting-subtitle">Controlar visibilidad de datos</span>
+                                </div>
+                            </div>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"/>
+                            </svg>
+                        </button>
+                        
+                        <button class="setting-item">
+                            <div class="setting-left">
+                                <div class="setting-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                                    </svg>
+                                </div>
+                                <div class="setting-info">
+                                    <span class="setting-title">Modo Oscuro</span>
+                                    <span class="setting-subtitle">Cambiar tema de la aplicación</span>
+                                </div>
+                            </div>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="dark-mode-toggle" class="toggle-input">
+                                <label for="dark-mode-toggle" class="toggle-label"></label>
+                            </div>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Acciones -->
+                <section class="profile-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Acciones</h3>
+                    </div>
+                    <div class="actions-list">
+                        <button class="action-btn action-btn-primary">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            <span>Exportar Datos</span>
+                        </button>
+                        
+                        <button class="action-btn action-btn-secondary">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                <polyline points="16 17 21 12 16 7"/>
+                                <line x1="21" y1="12" x2="9" y2="12"/>
+                            </svg>
+                            <span>Cerrar Sesión</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Información de la App -->
+                <section class="profile-section app-info">
+                    <div class="app-version">
+                        <span class="app-name">Academic App</span>
+                        <span class="app-version-number">v2.1.0</span>
+                    </div>
+                    <p class="app-description">Aplicación móvil académica para gestión de notas, calendario y perfil estudiantil.</p>
+                    <div class="app-links">
+                        <a href="#" class="app-link">Términos de Uso</a>
+                        <span class="app-link-separator">•</span>
+                        <a href="#" class="app-link">Política de Privacidad</a>
+                        <span class="app-link-separator">•</span>
+                        <a href="#" class="app-link">Soporte</a>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Espacio para el footer -->
+            <div class="bottom-spacer"></div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <span>Inicio</span>
+            </a>
+            <a href="notas.html" class="nav-item">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10 9 9 9 8 9"/>
+                </svg>
+                <span>Notas</span>
+            </a>
+            <a href="calendario.html" class="nav-item">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <span>Calendario</span>
+            </a>
+            <a href="perfil.html" class="nav-item active">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span>Perfil</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/app.js"></script>
+    <script src="js/perfil.js"></script>
+</body>
+</html>
