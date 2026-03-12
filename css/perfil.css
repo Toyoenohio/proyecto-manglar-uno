@@ -15,20 +15,22 @@
     background: linear-gradient(135deg, var(--color-primario), var(--color-primario-dark));
     border-radius: var(--radius-lg);
     color: var(--blanco);
+    position: relative;
 }
 
 .profile-avatar-large {
-    position: relative;
-    width: 96px;
-    height: 96px;
+    width: 100px;
+    height: 100px;
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    border: 4px solid rgba(255, 255, 255, 0.3);
     margin-bottom: var(--space-4);
+    position: relative;
 }
 
 .profile-avatar-large img {
     width: 100%;
     height: 100%;
-    border-radius: var(--radius-full);
-    border: 4px solid rgba(255, 255, 255, 0.3);
     object-fit: cover;
 }
 
@@ -39,8 +41,8 @@
     width: 36px;
     height: 36px;
     border-radius: var(--radius-full);
-    border: none;
     background-color: var(--blanco);
+    border: none;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -48,7 +50,6 @@
     color: var(--color-primario);
     box-shadow: var(--shadow-md);
     transition: transform 0.2s ease;
-    padding: 0;
 }
 
 .edit-avatar-btn:active {
@@ -56,14 +57,12 @@
 }
 
 .edit-avatar-btn svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
 }
 
 .profile-info {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
+    width: 100%;
 }
 
 .profile-name {
@@ -71,21 +70,21 @@
     font-weight: 700;
     color: var(--blanco);
     line-height: 1.2;
-    margin: 0;
+    margin: 0 0 var(--space-2) 0;
 }
 
 .profile-id {
     font-size: 14px;
     font-weight: 400;
     color: rgba(255, 255, 255, 0.8);
-    margin: 0;
+    margin: 0 0 var(--space-3) 0;
 }
 
 .profile-badges {
     display: flex;
-    gap: var(--space-2);
     justify-content: center;
-    margin-top: var(--space-2);
+    gap: var(--space-2);
+    flex-wrap: wrap;
 }
 
 .badge-student {
@@ -126,15 +125,16 @@
     justify-content: center;
     gap: var(--space-2);
     box-shadow: var(--shadow-sm);
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .stat-card:active {
     transform: scale(0.98);
+    box-shadow: var(--shadow-md);
 }
 
 .stat-value {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 700;
     color: var(--color-primario);
     line-height: 1;
@@ -156,11 +156,12 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-6);
+    margin-bottom: var(--space-6);
 }
 
 .profile-section {
     background-color: var(--blanco);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     padding: var(--space-5);
     box-shadow: var(--shadow-sm);
 }
@@ -201,8 +202,8 @@
 }
 
 .edit-btn svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
 }
 
 /* ========================================
@@ -217,7 +218,14 @@
 .info-item {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--gris-claro);
+}
+
+.info-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
 }
 
 .info-label {
@@ -232,7 +240,7 @@
     font-size: 15px;
     font-weight: 500;
     color: var(--gris-oscuro);
-    line-height: 1.3;
+    line-height: 1.4;
 }
 
 /* ========================================
@@ -243,7 +251,7 @@
     flex-direction: column;
     gap: 1px;
     background-color: var(--gris-claro);
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md);
     overflow: hidden;
 }
 
@@ -291,19 +299,19 @@
 .setting-info {
     flex: 1;
     min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
 }
 
 .setting-title {
+    display: block;
     font-size: 16px;
     font-weight: 600;
     color: var(--gris-oscuro);
     line-height: 1.3;
+    margin-bottom: 2px;
 }
 
 .setting-subtitle {
+    display: block;
     font-size: 13px;
     font-weight: 400;
     color: var(--gris-medio);
@@ -322,6 +330,7 @@
    ======================================== */
 .toggle-switch {
     position: relative;
+    display: inline-block;
     width: 52px;
     height: 28px;
     flex-shrink: 0;
@@ -331,7 +340,6 @@
     opacity: 0;
     width: 0;
     height: 0;
-    position: absolute;
 }
 
 .toggle-label {
@@ -341,22 +349,21 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--gris-claro);
-    border-radius: var(--radius-full);
-    transition: background-color 0.3s ease;
+    background-color: var(--gris-medio);
+    transition: .4s;
+    border-radius: 34px;
 }
 
 .toggle-label:before {
     position: absolute;
     content: "";
-    height: 22px;
-    width: 22px;
-    left: 3px;
-    bottom: 3px;
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
     background-color: var(--blanco);
-    border-radius: var(--radius-full);
-    transition: transform 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: .4s;
+    border-radius: 50%;
 }
 
 .toggle-input:checked + .toggle-label {
@@ -396,6 +403,11 @@
     opacity: 0.9;
 }
 
+.action-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
 .action-btn-primary {
     background-color: var(--color-primario);
     color: var(--blanco);
@@ -404,11 +416,6 @@
 .action-btn-secondary {
     background-color: var(--gris-claro);
     color: var(--gris-oscuro);
-}
-
-.action-btn svg {
-    width: 20px;
-    height: 20px;
 }
 
 /* ========================================
@@ -422,20 +429,21 @@
 
 .app-version {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: center;
+    align-items: baseline;
+    gap: var(--space-2);
     margin-bottom: var(--space-3);
 }
 
 .app-name {
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--gris-oscuro);
 }
 
 .app-version-number {
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 400;
     color: var(--gris-medio);
 }
 
@@ -443,8 +451,8 @@
     font-size: 14px;
     font-weight: 400;
     color: var(--gris-medio);
-    line-height: 1.4;
-    margin: 0 0 var(--space-3) 0;
+    line-height: 1.5;
+    margin: 0 0 var(--space-4) 0;
 }
 
 .app-links {
@@ -456,7 +464,7 @@
 }
 
 .app-link {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
     color: var(--color-primario);
     text-decoration: none;
@@ -467,17 +475,17 @@
 }
 
 .app-link-separator {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--gris-medio);
 }
 
 /* ========================================
    Animations
    ======================================== */
-@keyframes fadeIn {
+@keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
@@ -486,15 +494,15 @@
 }
 
 .profile-header {
-    animation: fadeIn 0.5s ease-out;
+    animation: fadeInUp 0.5s ease-out;
 }
 
 .profile-stats {
-    animation: fadeIn 0.5s ease-out 0.1s both;
+    animation: fadeInUp 0.5s ease-out 0.1s both;
 }
 
 .profile-section {
-    animation: fadeIn 0.5s ease-out;
+    animation: fadeInUp 0.5s ease-out;
 }
 
 .profile-section:nth-child(1) { animation-delay: 0.2s; }
@@ -506,69 +514,52 @@
    Responsive Adjustments
    ======================================== */
 @media (max-width: 360px) {
+    .profile-stats {
+        grid-template-columns: 1fr;
+    }
+    
     .profile-name {
         font-size: 20px;
     }
     
-    .stat-value {
-        font-size: 24px;
+    .setting-title {
+        font-size: 15px;
     }
     
-    .profile-section {
-        padding: var(--space-4);
+    .setting-subtitle {
+        font-size: 12px;
     }
 }
 
 /* ========================================
-   Profile Picture Upload (Para futura implementación)
+   Dark Mode Support (Placeholder)
    ======================================== */
-.profile-picture-upload {
-    display: none;
-}
-
-.upload-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2000;
-    padding: var(--space-4);
-}
-
-.upload-modal {
-    background-color: var(--blanco);
-    border-radius: var(--radius-lg);
-    padding: var(--space-5);
-    max-width: 320px;
-    width: 100%;
-    box-shadow: var(--shadow-lg);
-}
-
-/* ========================================
-   Loading States
-   ======================================== */
-.loading {
-    opacity: 0.6;
-    pointer-events: none;
-}
-
-.loading-spinner {
-    width: 24px;
-    height: 24px;
-    border: 3px solid var(--gris-claro);
-    border-top-color: var(--color-primario);
-    border-radius: var(--radius-full);
-    animation: spin 1s linear infinite;
-    margin: 0 auto;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
+@media (prefers-color-scheme: dark) {
+    .profile-section,
+    .stat-card,
+    .setting-item {
+        background-color: #1A1F28;
+        color: var(--blanco);
+    }
+    
+    .info-value,
+    .setting-title,
+    .section-title {
+        color: var(--blanco);
+    }
+    
+    .info-label,
+    .setting-subtitle,
+    .app-description {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .settings-list {
+        background-color: #2D3748;
+    }
+    
+    .app-info {
+        background-color: #2D3748;
+        border-color: #4A5568;
     }
 }
