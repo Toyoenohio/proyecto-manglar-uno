@@ -169,7 +169,7 @@ function renderUltimasNotas(calificadas) {
  */
 function createGradeItem(nota) {
     const item = document.createElement('div');
-    item.className = 'grade-item';
+    item.className = 'grade-card';
     
     // Determinar color según nota
     const notaNum = parseFloat(nota.nota);
@@ -181,9 +181,9 @@ function createGradeItem(nota) {
         <div class="grade-icon ${iconClass}">
             ${iconSVG}
         </div>
-        <div class="grade-content">
+        <div class="grade-info">
             <h4 class="grade-subject-name">${nota.materia}</h4>
-            <p class="grade-assignment">${nota.titulo}</p>
+            <p class="grade-activity">${nota.titulo}</p>
         </div>
         <div class="grade-score ${gradeClass}">${nota.nota}</div>
     `;

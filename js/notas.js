@@ -8,11 +8,13 @@
 // Esperar a que el DOM esté cargado
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('📊 Notas - Cargada correctamente');
+    console.log('🔍 Verificando autenticación...');
     
     // Verificar autenticación
     if (Auth.isLoggedIn()) {
         const user = Auth.getCurrentUser();
-        console.log('✅ Cargando notas para:', user.nombre);
+        console.log('✅ Usuario autenticado:', user);
+        console.log('📝 Cargando notas para:', user.nombre);
         
         // Cargar datos
         await loadNotasData(user);
@@ -21,6 +23,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         initSearch();
         initCourseToggles();
         initBackButton();
+    } else {
+        console.log('❌ Usuario NO autenticado');
+        console.log('🔑 Redirigiendo a login...');
+        // Auth.requireAuth(); // Comentado temporalmente para debug
     }
 });
 
@@ -107,13 +113,23 @@ function updateSummaryCards(promedio, materiasCount, evaluacionesCount) {
  * Renderizar lista de cursos con evaluaciones
  */
 function renderCourseList(evaluaciones, calificadas) {
+    console.log('📚 Renderizando lista de cursos...');
+    console.log('📊 Total evaluaciones:', evaluaciones.length);
+    console.log('📊 Evaluaciones calificadas:', calificadas.length);
+    
     const container = document.querySelector('.course-list');
-    if (!container) return;
+    if (!container) {
+        console.log('❌ No se encontró .course-list container');
+        return;
+    }
+    
+    console.log('✅ Container encontrado, limpiando contenido estático...');
     
     // Limpiar contenido estático
     container.innerHTML = '';
     
     if (evaluaciones.length === 0) {
+        console.log('ℹ️ No hay evaluaciones, mostrando empty state');
         container.innerHTML = `
             <div class="empty-state">
                 <p>📚 No hay evaluaciones registradas</p>
@@ -131,11 +147,16 @@ function renderCourseList(evaluaciones, calificadas) {
         evaluacionesPorMateria[e.materia].push(e);
     });
     
+    console.log('📊 Materias encontradas:', Object.keys(evaluacionesPorMateria));
+    
     // Crear cards por materia
     Object.entries(evaluacionesPorMateria).forEach(([materia, evals], index) => {
+        console.log(`📝 Creando card para materia: ${materia} (${evals.length} evaluaciones)`);
         const card = createCourseCard(materia, evals, calificadas);
         container.appendChild(card);
     });
+    
+    console.log('✅ Lista de cursos renderizada correctamente');
 }
 
 /**

@@ -280,6 +280,30 @@
         console.log('Auth.isLoggedIn():', Auth.isLoggedIn());
         console.log('Current user:', Auth.getCurrentUser());
         console.log('LocalStorage manglar_user:', localStorage.getItem('manglar_user'));
+        
+        // Forzar ejecución de perfil.js si no se ejecutó
+        setTimeout(() => {
+            console.log('🔧 Forzando ejecución de perfil.js...');
+            if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+                const user = Auth.getCurrentUser();
+                console.log('🔄 Actualizando perfil manualmente para:', user.nombre);
+                
+                // Actualizar nombre manualmente
+                const nameElement = document.querySelector('.profile-name');
+                if (nameElement && user.nombre) {
+                    console.log('📝 Cambiando nombre manualmente a:', user.nombre);
+                    nameElement.textContent = user.nombre;
+                }
+                
+                // Actualizar email manualmente
+                const emailElement = document.querySelector('.profile-email');
+                if (emailElement && user.correo) {
+                    console.log('📧 Cambiando email manualmente a:', user.correo);
+                    emailElement.textContent = user.correo;
+                }
+            }
+        }, 1000);
+        
         console.log('=== FIN DEBUG ===');
     </script>
 </body>

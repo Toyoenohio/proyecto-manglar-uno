@@ -94,14 +94,29 @@ function agruparEventosPorDia(evaluaciones) {
  * Actualizar eventos de hoy
  */
 function updateTodayEvents(eventosPorDia) {
+    console.log('📅 Actualizando eventos de hoy...');
+    
     const container = document.querySelector('.today-events');
-    if (!container) return;
+    if (!container) {
+        console.log('❌ No se encontró .today-events container');
+        return;
+    }
     
     const hoy = new Date();
     const hoyKey = hoy.toISOString().split('T')[0];
     const eventosHoy = eventosPorDia[hoyKey] || [];
     
+    console.log('📆 Hoy:', hoyKey);
+    console.log('📊 Eventos para hoy:', eventosHoy.length);
+    
+    // LIMPIAR COMPLETAMENTE el contenido estático
+    // Eliminar todos los hijos del container
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
+    }
+    
     if (eventosHoy.length === 0) {
+        console.log('ℹ️ No hay eventos para hoy, mostrando empty state');
         container.innerHTML = `
             <div class="empty-state">
                 <p>🎉 No hay eventos para hoy</p>
@@ -110,15 +125,15 @@ function updateTodayEvents(eventosPorDia) {
         return;
     }
     
-    // Limpiar contenido estático
-    const eventosStatic = container.querySelectorAll('.today-event');
-    eventosStatic.forEach(event => event.remove());
+    console.log('✅ Agregando eventos dinámicos para hoy...');
     
     // Agregar eventos dinámicos
     eventosHoy.forEach(evento => {
         const eventElement = createTodayEventElement(evento);
         container.appendChild(eventElement);
     });
+    
+    console.log('✅ Eventos de hoy actualizados correctamente');
 }
 
 /**
