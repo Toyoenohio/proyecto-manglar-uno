@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test CSS</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body {
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .test {
+            background: #1E6CEB;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        .test-success {
+            background: #059669;
+        }
+        .test-error {
+            background: #E53E3E;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test de CSS</h1>
+    
+    <div class="test">
+        Este div debería tener fondo azul (#1E6CEB)
+    </div>
+    
+    <div class="test test-success">
+        Este div debería tener fondo verde (#059669)
+    </div>
+    
+    <div class="test test-error">
+        Este div debería tener fondo rojo (#E53E3E)
+    </div>
+    
+    <div class="loading-spinner"></div>
+    <p>Spinner de carga debería aparecer arriba</p>
+    
+    <div class="toast-alert">
+        Toast alert de prueba
+    </div>
+    
+    <script>
+        console.log('CSS cargado:', document.styleSheets.length, 'hojas de estilo');
+        document.styleSheets.forEach((sheet, i) => {
+            console.log('Sheet', i, ':', sheet.href || 'inline');
+        });
+    </script>
+</body>
+</html>
