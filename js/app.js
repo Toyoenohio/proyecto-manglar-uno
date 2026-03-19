@@ -8,8 +8,17 @@
 // ========================================
 // Esperar a que el DOM esté cargado
 // ========================================
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     console.log('🎓 Academic App - Cargada correctamente');
+    
+    // Verificar autenticación
+    if (Auth.isLoggedIn()) {
+        const user = Auth.getCurrentUser();
+        console.log('✅ Usuario logueado:', user.nombre);
+        
+        // Actualizar UI con datos del usuario
+        await loadUserData(user);
+    }
     
     // Inicializar funcionalidades
     initBottomNav();
@@ -18,6 +27,224 @@ document.addEventListener('DOMContentLoaded', function() {
     initPullToRefresh();
     initCardInteractions();
 });
+
+// ========================================
+// Carga de Datos Dinámicos
+// ========================================
+
+/**
+ * Cargar datos del usuario en la UI
+ */
+async function loadUserData(user) {
+    try {
+        // Actualizar saludo
+        updateGreeting(user.nombre);
+        
+        // Cargar evaluaciones
+        const [pendientes, calificadas] = await Promise.all([
+            Database.getEvaluacionesPendientes(user.nombre),
+            Database.getEvaluacionesCalificadas(user.nombre)
+        ]);
+        
+        // Renderizar secciones
+        renderProximasEntregas(pendientes);
+        renderUltimasNotas(calificadas);
+        
+        console.log('✅ Datos cargados:', {
+            pendientes: pendientes.length,
+            calificadas: calificadas.length
+        });
+    } catch (error) {
+        console.error('❌ Error cargando datos:', error);
+        showError('Error cargando datos. Verifica tu conexión.');
+    }
+}
+
+/**
+ * Actualizar saludo con nombre del usuario
+ */
+function updateGreeting(nombre) {
+    const greetingElement = document.querySelector('.greeting-large');
+    if (greetingElement) {
+        greetingElement.textContent = `Hola, ${nombre}`;
+    }
+}
+
+/**
+ * Renderizar Próximas Entregas (evaluaciones pendientes)
+ */
+function renderProximasEntregas(pendientes) {
+    const container = document.querySelector('.assignments-scroll');
+    if (!container) return;
+    
+    // Limpiar contenido estático
+    container.innerHTML = '';
+    
+    if (pendientes.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <p>✅ ¡No tenés entregas pendientes!</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Ordenar por fecha límite
+    pendientes.sort((a, b) => new Date(a.fecha_limite) - new Date(b.fecha_limite));
+    
+    // Renderizar cards
+    pendientes.forEach(entrega => {
+        const card = createAssignmentCard(entrega);
+        container.appendChild(card);
+    });
+}
+
+/**
+ * Crear card de entrega
+ */
+function createAssignmentCard(entrega) {
+    const card = document.createElement('div');
+    card.className = 'assignment-card';
+    
+    // Determinar icono según tipo
+    const iconClass = getIconClass(entrega.tipo_evaluacion);
+    const iconSVG = getIconSVG(iconClass);
+    
+    // Determinar si es urgente
+    const esUrgente = entrega.es_urgente === true || entrega.es_urgente === 'TRUE';
+    const timeBadge = formatTimeBadge(entrega.fecha_limite);
+    
+    card.innerHTML = `
+        <div class="assignment-icon ${iconClass}">
+            ${iconSVG}
+        </div>
+        <div class="assignment-content">
+            <h3 class="assignment-title">${entrega.titulo}</h3>
+            <p class="assignment-subject">${entrega.materia}</p>
+            <div class="assignment-footer">
+                <span class="badge ${esUrgente ? 'badge-urgent-time' : 'badge-date'}">${timeBadge}</span>
+                ${esUrgente ? '<span class="badge badge-urgent">Urgente</span>' : ''}
+            </div>
+        </div>
+    `;
+    
+    return card;
+}
+
+/**
+ * Renderizar Últimas Notas (evaluaciones calificadas)
+ */
+function renderUltimasNotas(calificadas) {
+    // Buscar la sección de últimas notas (puede estar en index o notas.html)
+    const container = document.querySelector('.latest-grades') || document.querySelector('.grades-list');
+    if (!container) return;
+    
+    // Limpiar contenido estático
+    container.innerHTML = '';
+    
+    if (calificadas.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <p>Sin notas disponibles</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Ordenar por fecha (más recientes primero)
+    calificadas.sort((a, b) => new Date(b.fecha_limite) - new Date(a.fecha_limite));
+    
+    // Tomar solo las últimas 5
+    const ultimas5 = calificadas.slice(0, 5);
+    
+    // Renderizar items
+    ultimas5.forEach(nota => {
+        const item = createGradeItem(nota);
+        container.appendChild(item);
+    });
+}
+
+/**
+ * Crear item de nota
+ */
+function createGradeItem(nota) {
+    const item = document.createElement('div');
+    item.className = 'grade-item';
+    
+    // Determinar color según nota
+    const notaNum = parseFloat(nota.nota);
+    const gradeClass = notaNum >= 18 ? 'grade-score-high' : notaNum >= 15 ? 'grade-score-medium' : 'grade-score-low';
+    const iconClass = getIconClass(nota.tipo_evaluacion);
+    const iconSVG = getIconSVG(iconClass);
+    
+    item.innerHTML = `
+        <div class="grade-icon ${iconClass}">
+            ${iconSVG}
+        </div>
+        <div class="grade-content">
+            <h4 class="grade-subject-name">${nota.materia}</h4>
+            <p class="grade-assignment">${nota.titulo}</p>
+        </div>
+        <div class="grade-score ${gradeClass}">${nota.nota}</div>
+    `;
+    
+    return item;
+}
+
+/**
+ * Obtener clase de icono según tipo de evaluación
+ */
+function getIconClass(tipo) {
+    const tipoLower = (tipo || '').toLowerCase();
+    
+    if (tipoLower.includes('examen') || tipoLower.includes('quiz')) return 'math';
+    if (tipoLower.includes('ensayo')) return 'essay';
+    if (tipoLower.includes('laboratorio')) return 'science';
+    if (tipoLower.includes('proyecto')) return 'project';
+    if (tipoLower.includes('tarea')) return 'homework';
+    
+    return 'assignment'; // Default
+}
+
+/**
+ * Obtener SVG del icono
+ */
+function getIconSVG(iconClass) {
+    const icons = {
+        math: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/><line x1="7" y1="7" x2="17" y2="17"/></svg>',
+        essay: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>',
+        science: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>',
+        project: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>',
+        homework: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"/><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
+        assignment: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>'
+    };
+    
+    return icons[iconClass] || icons.assignment;
+}
+
+/**
+ * Formatear badge de tiempo
+ */
+function formatTimeBadge(fechaLimite) {
+    if (!fechaLimite) return 'Sin fecha';
+    
+    const fecha = new Date(fechaLimite);
+    const ahora = new Date();
+    const diffMs = fecha - ahora;
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 0) {
+        return 'Vencido';
+    } else if (diffDays === 0) {
+        return 'Hoy, ' + fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    } else if (diffDays === 1) {
+        return 'Mañana, ' + fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    } else if (diffDays <= 7) {
+        return `En ${diffDays} días`;
+    } else {
+        return fecha.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+    }
+}
 
 // ========================================
 // Bottom Navigation
@@ -62,7 +289,25 @@ function initNotificationBtn() {
             }
             
             // Aquí iría la apertura del modal de notificaciones
-            showAlert('🔔 3 notificaciones nuevas', 'info');
+            showAlert('🔔 Sin notificaciones nuevas', 'info');
+        });
+    }
+}
+
+// ========================================
+// Logout
+// ========================================
+function initLogout() {
+    // Buscar botón de logout en perfil.html o agregar en header
+    const logoutBtn = document.querySelector('.logout-btn');
+    
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            if (confirm('¿Seguro que querés cerrar sesión?')) {
+                Auth.logout();
+            }
         });
     }
 }
