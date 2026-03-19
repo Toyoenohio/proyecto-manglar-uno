@@ -25,28 +25,13 @@ document.addEventListener('DOMContentLoaded', function() {
 function initBottomNav() {
     const navItems = document.querySelectorAll('.nav-item');
     
+    // Lo único que necesitamos es el feedback de vibración
+    // Quitamos el e.preventDefault() para que el navegador sí cambie de página
     navItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Remover active de todos
-            navItems.forEach(nav => nav.classList.remove('active'));
-            
-            // Agregar active al actual
-            this.classList.add('active');
-            
+        item.addEventListener('click', function() {
             // Feedback háptico (si está disponible en mobile)
             if (navigator.vibrate) {
                 navigator.vibrate(10);
-            }
-            
-            // Aquí iría la navegación real
-            const section = this.querySelector('span').textContent.toLowerCase();
-            console.log('📍 Navegando a:', section);
-            
-            // Ejemplo: scroll a diferentes secciones
-            if (section === 'inicio') {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         });
     });
