@@ -130,12 +130,45 @@ const Auth = {
      * Requerir autenticación (para páginas protegidas)
      */
     requireAuth() {
+        // Verificar si ya estamos en login para evitar loops
+        const isLoginPage = window.location.pathname.includes('login.html');
+        if (isLoginPage) {
+            return true; // No redirigir desde login a login
+        }
+        
         if (!this.isLoggedIn()) {
             console.log('🔒 [AUTH] Redirigiendo a login');
-            window.location.href = 'login.html';
+            
+            // Limpiar cualquier sesión corrupta
+            this.clearCorruptedSession();
+            
+            // Redirigir a login con un parámetro para evitar loops
+            const currentUrl = window.location.pathname;
+            window.location.href = `login.html?redirect=${encodeURIComponent(currentUrl)}`;
             return false;
         }
         return true;
+    },
+    
+    /**
+     * Limpiar sesión corrupta
+     */
+    clearCorruptedSession() {
+        try {
+            // Verificar si hay datos inconsistentes
+            const userStr = localStorage.getItem(this.keys.user);
+            const session = localStorage.getItem(this.keys.session);
+            
+            // Si hay user pero no session, o viceversa, limpiar todo
+            if ((userStr && !session) || (!userStr && session)) {
+                console.warn('🧹 [AUTH] Limpiando sesión corrupta');
+                localStorage.removeItem(this.keys.user);
+                localStorage.removeItem(this.keys.session);
+                localStorage.removeItem(this.keys.timestamp);
+            }
+        } catch (error) {
+            console.error('❌ [AUTH] Error limpiando sesión:', error);
+        }
     },
     
     /**
@@ -160,7 +193,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Páginas públicas: login.html
     const isLoginPage = window.location.pathname.includes('login.html');
     
+    // Solo ejecutar requireAuth si NO estamos en una página pública
+    // y NO estamos en la página de login
     if (!isPublic && !isLoginPage) {
-        Auth.requireAuth();
+        // Pequeño delay para asegurar que todo esté cargado
+        setTimeout(() => {
+            Auth.requireAuth();
+        }, 100);
     }
 });

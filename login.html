@@ -187,7 +187,7 @@
         }
     </style>
 </head>
-<body>
+<body data-public="true">
     <div class="login-container">
         <div class="login-header">
             <div class="login-logo">🎓</div>
@@ -245,10 +245,21 @@
     <script src="js/database.js"></script>
     <script src="js/auth.js"></script>
     <script>
-        // Verificar si ya está logueado
-        if (Auth.isLoggedIn()) {
-            window.location.href = 'index.html';
-        }
+        // Verificar si ya está logueado (con timeout para evitar loops)
+        setTimeout(() => {
+            if (Auth.isLoggedIn()) {
+                console.log('✅ [LOGIN] Usuario ya autenticado, redirigiendo...');
+                
+                // Obtener parámetro de redirección
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirect = urlParams.get('redirect') || 'index.html';
+                
+                // Redirigir después de un pequeño delay
+                setTimeout(() => {
+                    window.location.href = redirect;
+                }, 500);
+            }
+        }, 100);
         
         // Manejar el formulario de login
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
