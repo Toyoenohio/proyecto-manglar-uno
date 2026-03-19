@@ -197,9 +197,11 @@ function createCourseCard(materia, evaluaciones, todasCalificadas) {
             </div>
             <div class="course-right">
                 ${promedioMateria > 0 ? `<span class="grade-badge ${badgeClass}">${promedioMateria.toFixed(1)}</span>` : ''}
-                <svg class="course-toggle" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="6 9 12 15 18 9"/>
-                </svg>
+                <button class="expand-btn" aria-label="Expandir/Contraer">
+                    <svg class="course-toggle" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </button>
             </div>
         </div>
         <div class="course-details">
@@ -302,22 +304,33 @@ function initSearch() {
 }
 
 /**
- * Inicializar toggles de cursos
+ * Inicializar toggles de cursos (Corregido)
  */
 function initCourseToggles() {
+    // Escuchar clics en todo el documento para delegación de eventos
     document.addEventListener('click', function(e) {
-        const toggle = e.target.closest('.course-toggle');
-        if (!toggle) return;
+        // Buscar si se hizo clic en el botón expand-btn o en la flecha course-toggle
+        const toggleBtn = e.target.closest('.expand-btn') || e.target.closest('.course-toggle');
+        if (!toggleBtn) return;
         
-        const card = toggle.closest('.course-card');
+        // Encontrar la tarjeta padre
+        const card = toggleBtn.closest('.course-card');
         if (!card) return;
         
+        // Prevenir comportamiento por defecto
+        e.preventDefault();
+        
+        // Alternar la clase que expande el contenido
         card.classList.toggle('course-card-expanded');
         
-        // Rotar flecha
-        toggle.style.transform = card.classList.contains('course-card-expanded') 
-            ? 'rotate(180deg)' 
-            : 'rotate(0deg)';
+        // Rotar el SVG dentro del botón
+        const svg = toggleBtn.querySelector('svg') || toggleBtn;
+        if (svg && svg.tagName.toLowerCase() === 'svg') {
+            svg.style.transform = card.classList.contains('course-card-expanded') 
+                ? 'rotate(180deg)' 
+                : 'rotate(0deg)';
+            svg.style.transition = 'transform 0.3s ease';
+        }
     });
 }
 
