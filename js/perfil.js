@@ -220,16 +220,39 @@ function updateStatCards(promedio, materias, asistencia, creditos) {
  * Inicializar acciones del perfil
  */
 function initProfileActions() {
-    // Botón de logout
-    const logoutBtn = document.querySelector('.logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            if (confirm('¿Seguro que querés cerrar sesión?')) {
-                Auth.logout();
+    console.log('🔧 Inicializando acciones del perfil...');
+    
+    // Botón de logout - buscar de múltiples formas
+    let logoutBtn = document.querySelector('.logout-btn');
+    
+    // Si no encuentra con .logout-btn, buscar por texto
+    if (!logoutBtn) {
+        console.log('🔍 Buscando botón de logout por texto...');
+        const allButtons = document.querySelectorAll('button');
+        allButtons.forEach(btn => {
+            if (btn.textContent.includes('Cerrar Sesión') || btn.textContent.includes('Cerrar')) {
+                logoutBtn = btn;
+                console.log('✅ Encontrado botón de logout por texto:', btn);
             }
         });
+    }
+    
+    if (logoutBtn) {
+        console.log('✅ Botón de logout encontrado:', logoutBtn);
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('👋 Click en botón de logout');
+            
+            if (confirm('¿Seguro que querés cerrar sesión?')) {
+                console.log('✅ Confirmado, cerrando sesión...');
+                Auth.logout();
+            } else {
+                console.log('❌ Cancelado por el usuario');
+            }
+        });
+    } else {
+        console.log('❌ No se encontró botón de logout');
+        console.log('🔍 Botones disponibles:', document.querySelectorAll('button').length);
     }
     
     // Botón de editar avatar (placeholder)
@@ -259,6 +282,8 @@ function initProfileActions() {
             showAlert(`🔗 ${text} disponible próximamente`, 'info');
         });
     });
+    
+    console.log('✅ Acciones del perfil inicializadas');
 }
 
 /**
