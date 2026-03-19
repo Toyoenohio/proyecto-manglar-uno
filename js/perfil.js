@@ -81,13 +81,28 @@ function updateProfileInfo(user) {
         console.log('❌ No se encontró elemento .profile-id');
     }
     
-    // Email
-    const emailElement = document.querySelector('.profile-email');
-    if (emailElement) {
-        console.log('📧 Actualizando email a:', user.correo);
+    // Email - buscar en múltiples lugares
+    let emailElement = document.querySelector('.profile-email');
+    
+    // Si no encuentra con .profile-email, buscar en .info-value que contenga @
+    if (!emailElement) {
+        console.log('🔍 Buscando email en .info-value...');
+        const infoValues = document.querySelectorAll('.info-value');
+        infoValues.forEach(el => {
+            if (el.textContent.includes('@')) {
+                emailElement = el;
+                console.log('✅ Email encontrado en .info-value:', el);
+            }
+        });
+    }
+    
+    if (emailElement && user.correo) {
+        console.log('📧 Actualizando email de:', emailElement.textContent, 'a:', user.correo);
         emailElement.textContent = user.correo;
-    } else {
-        console.log('ℹ️ No se encontró elemento .profile-email (puede ser normal)');
+    } else if (!emailElement) {
+        console.log('❌ No se encontró elemento para email');
+    } else if (!user.correo) {
+        console.log('❌ Usuario no tiene email definido');
     }
     
     // Badges
@@ -239,15 +254,23 @@ function initProfileActions() {
     
     if (logoutBtn) {
         console.log('✅ Botón de logout encontrado:', logoutBtn);
-        logoutBtn.addEventListener('click', function(e) {
+        
+        // Quitar eventos previos clonando el nodo para asegurar que solo ejecute esto
+        const newLogoutBtn = logoutBtn.cloneNode(true);
+        logoutBtn.parentNode.replaceChild(newLogoutBtn, logoutBtn);
+        
+        newLogoutBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log('👋 Click en botón de logout');
+            e.stopPropagation(); // Evitar conflictos con otros scripts
             
-            if (confirm('¿Seguro que querés cerrar sesión?')) {
+            if (confirm('¿Seguro que quieres cerrar sesión?')) {
                 console.log('✅ Confirmado, cerrando sesión...');
-                Auth.logout();
-            } else {
-                console.log('❌ Cancelado por el usuario');
+                
+                // Limpiar todo el LocalStorage
+                localStorage.clear();
+                
+                // Redirigir físicamente al login
+                window.location.href = 'login.html';
             }
         });
     } else {
