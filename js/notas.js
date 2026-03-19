@@ -1,397 +1,462 @@
 /**
  * ========================================
- * Pantalla de Notas - Mis Calificaciones
- * Funcionalidad JavaScript
- * ======================================== */
+ * Notas - Academic App
+ * Carga dinámica de evaluaciones
+ * ========================================
+ */
 
-// ========================================
 // Esperar a que el DOM esté cargado
-// ========================================
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('📊 Pantalla de Notas - Cargada correctamente');
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('📊 Notas - Cargada correctamente');
     
-    // Inicializar funcionalidades
-    initCourseCards();
-    initSearch();
-    initSimulatorBanner();
+    // Verificar autenticación
+    if (Auth.isLoggedIn()) {
+        const user = Auth.getCurrentUser();
+        console.log('✅ Cargando notas para:', user.nombre);
+        
+        // Cargar datos
+        await loadNotasData(user);
+        
+        // Inicializar funcionalidades
+        initSearch();
+        initCourseToggles();
+        initBackButton();
+    }
 });
 
-// ========================================
-// Course Cards - Expandir/Colapsar
-// ========================================
-function initCourseCards() {
-    const courseCards = document.querySelectorAll('.course-card');
-    
-    courseCards.forEach(card => {
-        const header = card.querySelector('.course-header');
-        const expandBtn = card.querySelector('.expand-btn');
+/**
+ * Cargar datos de notas del usuario
+ */
+async function loadNotasData(user) {
+    try {
+        // Mostrar loading
+        showLoading();
         
-        if (header) {
-            header.addEventListener('click', function(e) {
-                // Prevenir que el botón de expandir dispare dos eventos
-                if (e.target.closest('.expand-btn')) {
-                    return;
-                }
-                
-                toggleCourseCard(card);
-            });
-        }
+        // Cargar todas las evaluaciones del usuario
+        const evaluaciones = await Database.getEvaluaciones(user.nombre);
         
-        if (expandBtn) {
-            expandBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                toggleCourseCard(card);
-            });
-        }
-    });
-}
-
-function toggleCourseCard(card) {
-    const isExpanded = card.classList.contains('course-card-expanded');
-    const courseName = card.querySelector('.course-name')?.textContent;
-    
-    if (isExpanded) {
-        // Colapsar
-        card.classList.remove('course-card-expanded');
-        const expandBtnSvg = card.querySelector('.expand-btn svg');
-        if (expandBtnSvg) {
-            expandBtnSvg.style.transform = 'rotate(0deg)';
-        }
-        console.log('📚 Colapsando:', courseName);
-    } else {
-        // Opcional: Colapsar todas las demás primero
-        // closeAllOtherCards(card);
+        // Separar por estado
+        const calificadas = evaluaciones.filter(e => e.estado === 'Calificado' && e.nota);
+        const pendientes = evaluaciones.filter(e => e.estado === 'Pendiente');
         
-        // Expandir
-        card.classList.add('course-card-expanded');
-        const expandBtnSvg = card.querySelector('.expand-btn svg');
-        if (expandBtnSvg) {
-            expandBtnSvg.style.transform = 'rotate(180deg)';
-        }
-        console.log('📖 Expandiendo:', courseName);
-    }
-    
-    // Feedback háptico
-    if (navigator.vibrate) {
-        navigator.vibrate(10);
-    }
-}
-
-function closeAllOtherCards(currentCard) {
-    const allCards = document.querySelectorAll('.course-card');
-    allCards.forEach(card => {
-        if (card !== currentCard && card.classList.contains('course-card-expanded')) {
-            card.classList.remove('course-card-expanded');
-            const expandBtnSvg = card.querySelector('.expand-btn svg');
-            if (expandBtnSvg) {
-                expandBtnSvg.style.transform = 'rotate(0deg)';
-            }
-        }
-    });
-}
-
-// ========================================
-// Search Functionality
-// ========================================
-function initSearch() {
-    const searchInput = document.querySelector('.search-input');
-    
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase().trim();
-            filterCourses(searchTerm);
+        // Calcular estadísticas
+        const promedio = await calcularPromedio(calificadas);
+        const materias = [...new Set(evaluaciones.map(e => e.materia))];
+        
+        // Actualizar UI
+        updateSummaryCards(promedio, materias.length, evaluaciones.length);
+        renderCourseList(evaluaciones, calificadas);
+        
+        console.log('✅ Datos de notas cargados:', {
+            total: evaluaciones.length,
+            calificadas: calificadas.length,
+            pendientes: pendientes.length,
+            promedio: promedio,
+            materias: materias.length
         });
         
-        // Búsqueda en tiempo real mientras se escribe
-        searchInput.addEventListener('keyup', function(e) {
-            if (e.key === 'Enter') {
-                const searchTerm = this.value.toLowerCase().trim();
-                if (searchTerm) {
-                    console.log('🔍 Buscando:', searchTerm);
-                    showAlert(`🔍 Buscando: "${searchTerm}"`, 'info');
-                }
-            }
-        });
+        // Ocultar loading
+        hideLoading();
+    } catch (error) {
+        console.error('❌ Error cargando notas:', error);
+        showError('Error cargando notas. Verifica tu conexión.');
+        hideLoading();
     }
 }
 
-function filterCourses(searchTerm) {
-    const courseCards = document.querySelectorAll('.course-card');
+/**
+ * Calcular promedio de evaluaciones calificadas
+ */
+function calcularPromedio(calificadas) {
+    if (calificadas.length === 0) return 0;
     
-    courseCards.forEach(card => {
-        const courseName = card.querySelector('.course-name')?.textContent.toLowerCase() || '';
-        const courseProfessor = card.querySelector('.course-professor')?.textContent.toLowerCase() || '';
-        
-        const matchesSearch = courseName.includes(searchTerm) || courseProfessor.includes(searchTerm);
-        
-        if (matchesSearch) {
-            card.style.display = 'block';
-            card.style.animation = 'fadeInUp 0.3s ease';
-        } else {
-            card.style.display = 'none';
+    const suma = calificadas.reduce((acc, e) => acc + (parseFloat(e.nota) || 0), 0);
+    return Math.round((suma / calificadas.length) * 10) / 10; // Redondear a 1 decimal
+}
+
+/**
+ * Actualizar tarjetas de resumen
+ */
+function updateSummaryCards(promedio, materiasCount, evaluacionesCount) {
+    // Promedio
+    const promedioCard = document.querySelector('.summary-card-primary .summary-value');
+    if (promedioCard) {
+        promedioCard.textContent = promedio.toFixed(1);
+    }
+    
+    // Materias
+    const materiasCard = document.querySelectorAll('.summary-card')[1];
+    if (materiasCard) {
+        const valueElement = materiasCard.querySelector('.summary-value');
+        if (valueElement) {
+            valueElement.textContent = materiasCount;
         }
+    }
+    
+    // Créditos (usamos evaluaciones como placeholder)
+    const creditosCard = document.querySelectorAll('.summary-card')[2];
+    if (creditosCard) {
+        const valueElement = creditosCard.querySelector('.summary-value');
+        if (valueElement) {
+            valueElement.textContent = evaluacionesCount;
+        }
+    }
+}
+
+/**
+ * Renderizar lista de cursos con evaluaciones
+ */
+function renderCourseList(evaluaciones, calificadas) {
+    const container = document.querySelector('.course-list');
+    if (!container) return;
+    
+    // Limpiar contenido estático
+    container.innerHTML = '';
+    
+    if (evaluaciones.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <p>📚 No hay evaluaciones registradas</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Agrupar evaluaciones por materia
+    const evaluacionesPorMateria = {};
+    evaluaciones.forEach(e => {
+        if (!evaluacionesPorMateria[e.materia]) {
+            evaluacionesPorMateria[e.materia] = [];
+        }
+        evaluacionesPorMateria[e.materia].push(e);
     });
     
-    // Mostrar mensaje si no hay resultados
-    const visibleCards = document.querySelectorAll('.course-card[style="display: block;"]');
-    const noResultsMsg = document.querySelector('.no-results-message');
-    
-    if (visibleCards.length === 0 && searchTerm) {
-        if (!noResultsMsg) {
-            showNoResultsMessage();
-        }
-    } else if (noResultsMsg) {
-        noResultsMsg.remove();
-    }
+    // Crear cards por materia
+    Object.entries(evaluacionesPorMateria).forEach(([materia, evals], index) => {
+        const card = createCourseCard(materia, evals, calificadas);
+        container.appendChild(card);
+    });
 }
 
-function showNoResultsMessage() {
-    const courseList = document.querySelector('.course-list');
-    if (!courseList) return;
+/**
+ * Crear card de materia con evaluaciones
+ */
+function createCourseCard(materia, evaluaciones, todasCalificadas) {
+    const card = document.createElement('div');
+    card.className = 'course-card';
+    card.dataset.course = materia.toLowerCase().replace(/\s+/g, '-');
     
-    const noResultsMsg = document.createElement('div');
-    noResultsMsg.className = 'no-results-message';
-    noResultsMsg.innerHTML = `
-        <div style="text-align: center; padding: 40px 20px; color: var(--gris-medio);">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto 16px; opacity: 0.5;">
-                <circle cx="11" cy="11" r="8"/>
-                <path d="m21 21-4.35-4.35"/>
-            </svg>
-            <p style="font-size: 16px; font-weight: 500; margin: 0 0 8px;">No se encontraron materias</p>
-            <p style="font-size: 14px; margin: 0;">Intentá con otro término de búsqueda</p>
+    // Calcular promedio de la materia
+    const calificadasMateria = evaluaciones.filter(e => e.estado === 'Calificado' && e.nota);
+    const promedioMateria = calificadasMateria.length > 0 
+        ? calificadasMateria.reduce((acc, e) => acc + parseFloat(e.nota), 0) / calificadasMateria.length
+        : 0;
+    
+    // Determinar clase del badge según promedio
+    const badgeClass = promedioMateria >= 18 ? 'grade-badge-high' : 
+                      promedioMateria >= 15 ? 'grade-badge-medium' : 'grade-badge-low';
+    
+    // Determinar icono
+    const iconClass = getIconClassForMateria(materia);
+    const iconSVG = getIconSVG(iconClass);
+    
+    // Crear HTML de evaluaciones
+    const evaluacionesHTML = evaluaciones.map(e => createEvaluationItem(e)).join('');
+    
+    card.innerHTML = `
+        <div class="course-header">
+            <div class="course-left">
+                <div class="course-icon ${iconClass}">
+                    ${iconSVG}
+                </div>
+                <div class="course-info">
+                    <h3 class="course-name">${materia}</h3>
+                    <p class="course-professor">${evaluaciones.length} evaluaciones</p>
+                </div>
+            </div>
+            <div class="course-right">
+                ${promedioMateria > 0 ? `<span class="grade-badge ${badgeClass}">${promedioMateria.toFixed(1)}</span>` : ''}
+                <svg class="course-toggle" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"/>
+                </svg>
+            </div>
+        </div>
+        <div class="course-details">
+            <div class="evaluations-list">
+                ${evaluacionesHTML}
+            </div>
         </div>
     `;
-    courseList.appendChild(noResultsMsg);
-}
-
-// ========================================
-// Simulator Banner
-// ========================================
-function initSimulatorBanner() {
-    const simulatorBanner = document.querySelector('.simulator-banner');
     
-    if (simulatorBanner) {
-        simulatorBanner.addEventListener('click', function() {
-            console.log('📊 Abriendo simulador de promedio');
-            
-            // Feedback háptico
-            if (navigator.vibrate) {
-                navigator.vibrate([10, 30, 10]);
-            }
-            
-            // Aquí iría la navegación al simulador
-            showAlert('🧮 Abriendo simulador...', 'info');
-            
-            // Ejemplo: mostrar un modal o navegar a otra página
-            setTimeout(() => {
-                showAlert('✨ Función próximamente', 'info');
-            }, 1000);
-        });
-    }
+    return card;
 }
 
-// ========================================
-// Botón de Notificaciones (Override del app.js)
-// ========================================
-function initNotificationBtn() {
-    const notificationBtn = document.querySelector('.notification-btn');
+/**
+ * Crear item de evaluación individual
+ */
+function createEvaluationItem(evaluacion) {
+    const notaNum = parseFloat(evaluacion.nota) || 0;
+    const gradeClass = notaNum >= 18 ? 'grade-badge-high' : 
+                      notaNum >= 15 ? 'grade-badge-medium' : 'grade-badge-low';
     
-    if (notificationBtn) {
-        notificationBtn.addEventListener('click', function() {
-            console.log('🔔 Notificaciones abiertas');
-            
-            // Feedback háptico
-            if (navigator.vibrate) {
-                navigator.vibrate([10, 30, 10]);
-            }
-            
-            // Mostrar badge de notificaciones (ejemplo)
-            const badge = this.querySelector('.notification-badge');
-            if (badge) {
-                badge.style.animation = 'pulse 0.5s ease';
-                setTimeout(() => {
-                    badge.style.animation = '';
-                }, 500);
-            }
-            
-            // Aquí iría la apertura del modal de notificaciones
-            showAlert('🔔 3 notificaciones nuevas', 'info');
-        });
-    }
+    const fecha = evaluacion.fecha_limite ? new Date(evaluacion.fecha_limite) : null;
+    const fechaFormateada = fecha ? fecha.toLocaleDateString('es-ES', { 
+        day: 'numeric', 
+        month: 'short' 
+    }) : 'Sin fecha';
+    
+    const estadoBadge = evaluacion.estado === 'Calificado' 
+        ? `<span class="badge badge-grade">Calificado</span>`
+        : `<span class="badge badge-pending">Pendiente</span>`;
+    
+    const notaHTML = evaluacion.estado === 'Calificado' && evaluacion.nota
+        ? `<span class="evaluation-grade ${gradeClass}">${evaluacion.nota}</span>`
+        : '';
+    
+    return `
+        <div class="evaluation-item">
+            <div class="evaluation-left">
+                <span class="evaluation-type">${evaluacion.tipo_evaluacion}</span>
+                <h4 class="evaluation-title">${evaluacion.titulo}</h4>
+            </div>
+            <div class="evaluation-right">
+                <div class="evaluation-meta">
+                    <span class="evaluation-date">${fechaFormateada}</span>
+                    ${estadoBadge}
+                </div>
+                ${notaHTML}
+            </div>
+        </div>
+    `;
 }
 
-// ========================================
-// Botón de Volver
-// ========================================
+/**
+ * Obtener clase de icono para materia
+ */
+function getIconClassForMateria(materia) {
+    const materiaLower = materia.toLowerCase();
+    
+    if (materiaLower.includes('matemática') || materiaLower.includes('cálculo')) return 'math';
+    if (materiaLower.includes('física')) return 'science';
+    if (materiaLower.includes('química')) return 'science';
+    if (materiaLower.includes('historia') || materiaLower.includes('sociales')) return 'essay';
+    if (materiaLower.includes('literatura') || materiaLower.includes('español')) return 'essay';
+    if (materiaLower.includes('programación') || materiaLower.includes('computación')) return 'project';
+    
+    return 'assignment';
+}
+
+/**
+ * Obtener SVG del icono (reutilizado de app.js)
+ */
+function getIconSVG(iconClass) {
+    const icons = {
+        math: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/><line x1="7" y1="7" x2="17" y2="17"/></svg>',
+        essay: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>',
+        science: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>',
+        project: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>',
+        assignment: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>'
+    };
+    
+    return icons[iconClass] || icons.assignment;
+}
+
+/**
+ * Inicializar búsqueda
+ */
+function initSearch() {
+    const searchInput = document.querySelector('.search-input');
+    if (!searchInput) return;
+    
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+        const courseCards = document.querySelectorAll('.course-card');
+        
+        courseCards.forEach(card => {
+            const courseName = card.querySelector('.course-name').textContent.toLowerCase();
+            const shouldShow = courseName.includes(query) || query === '';
+            card.style.display = shouldShow ? '' : 'none';
+        });
+    });
+}
+
+/**
+ * Inicializar toggles de cursos
+ */
+function initCourseToggles() {
+    document.addEventListener('click', function(e) {
+        const toggle = e.target.closest('.course-toggle');
+        if (!toggle) return;
+        
+        const card = toggle.closest('.course-card');
+        if (!card) return;
+        
+        card.classList.toggle('course-card-expanded');
+        
+        // Rotar flecha
+        toggle.style.transform = card.classList.contains('course-card-expanded') 
+            ? 'rotate(180deg)' 
+            : 'rotate(0deg)';
+    });
+}
+
+/**
+ * Inicializar botón de volver
+ */
 function initBackButton() {
     const backBtn = document.querySelector('.back-btn');
-    
     if (backBtn) {
         backBtn.addEventListener('click', function() {
-            console.log('⬅️ Volviendo al inicio');
-            
-            // Feedback háptico
-            if (navigator.vibrate) {
-                navigator.vibrate(10);
-            }
-            
-            // Navegar al inicio
-            window.location.href = 'index.html';
+            window.history.back();
         });
     }
 }
 
-// Inicializar botón de volver
-initBackButton();
-
-// ========================================
-// Utilidades Específicas de Notas
-// ========================================
-
-// Actualizar una nota específica
-function updateAssessmentScore(courseName, assessmentName, newScore) {
-    const courseCards = document.querySelectorAll('.course-card');
-    
-    courseCards.forEach(card => {
-        const course = card.querySelector('.course-name')?.textContent;
-        if (course === courseName) {
-            const assessments = card.querySelectorAll('.assessment-item');
-            assessments.forEach(assessment => {
-                const name = assessment.querySelector('.assessment-name')?.textContent;
-                if (name === assessmentName) {
-                    const scoreElement = assessment.querySelector('.assessment-score');
-                    if (scoreElement) {
-                        // Animación de actualización
-                        scoreElement.style.transform = 'scale(1.2)';
-                        scoreElement.style.transition = 'transform 0.2s ease';
-                        
-                        setTimeout(() => {
-                            scoreElement.textContent = newScore;
-                            scoreElement.style.transform = 'scale(1)';
-                            
-                            // Actualizar color según nota
-                            scoreElement.classList.remove('assessment-score-high', 'assessment-score-medium', 'assessment-score-low', 'assessment-score-pending');
-                            
-                            if (newScore === 'Pendiente') {
-                                scoreElement.classList.add('assessment-score-pending');
-                            } else {
-                                const numScore = parseFloat(newScore);
-                                if (numScore >= 16) {
-                                    scoreElement.classList.add('assessment-score-high');
-                                } else if (numScore >= 14) {
-                                    scoreElement.classList.add('assessment-score-medium');
-                                } else {
-                                    scoreElement.classList.add('assessment-score-low');
-                                }
-                            }
-                        }, 200);
-                    }
-                }
-            });
-            
-            // Actualizar nota principal del curso
-            updateCourseGrade(card);
-        }
-    });
-}
-
-// Recalcular nota del curso basado en las evaluaciones
-function updateCourseGrade(courseCard) {
-    const assessments = courseCard.querySelectorAll('.assessment-item');
-    let totalWeight = 0;
-    let weightedSum = 0;
-    
-    assessments.forEach(assessment => {
-        const weightText = assessment.querySelector('.assessment-weight')?.textContent || '(0%)';
-        const weight = parseInt(weightText.replace(/[()%]/g, '')) / 100;
-        const scoreText = assessment.querySelector('.assessment-score')?.textContent || '0';
-        const score = parseFloat(scoreText);
-        
-        if (!isNaN(score) && !isNaN(weight)) {
-            weightedSum += score * weight;
-            totalWeight += weight;
-        }
-    });
-    
-    if (totalWeight > 0) {
-        const finalGrade = (weightedSum / totalWeight).toFixed(1);
-        const gradeBadge = courseCard.querySelector('.grade-badge');
-        
-        if (gradeBadge) {
-            // Animación de actualización
-            gradeBadge.style.transform = 'scale(1.2)';
-            gradeBadge.style.transition = 'transform 0.2s ease';
-            
-            setTimeout(() => {
-                gradeBadge.textContent = finalGrade;
-                gradeBadge.style.transform = 'scale(1)';
-                
-                // Actualizar color
-                gradeBadge.classList.remove('grade-badge-high', 'grade-badge-medium', 'grade-badge-low');
-                
-                const numGrade = parseFloat(finalGrade);
-                if (numGrade >= 16) {
-                    gradeBadge.classList.add('grade-badge-high');
-                } else if (numGrade >= 14) {
-                    gradeBadge.classList.add('grade-badge-medium');
-                } else {
-                    gradeBadge.classList.add('grade-badge-low');
-                }
-            }, 200);
-        }
+/**
+ * Mostrar loading
+ */
+function showLoading() {
+    const container = document.querySelector('.course-list');
+    if (container) {
+        container.innerHTML = `
+            <div class="loading-state">
+                <div class="loading-spinner"></div>
+                <p>Cargando notas...</p>
+            </div>
+        `;
     }
 }
 
-// ========================================
-// Exportar/Importar Datos (Futuro)
-// ========================================
-
-// Exportar notas a JSON
-function exportGrades() {
-    const grades = [];
-    const courseCards = document.querySelectorAll('.course-card');
-    
-    courseCards.forEach(card => {
-        const courseName = card.querySelector('.course-name')?.textContent;
-        const professor = card.querySelector('.course-professor')?.textContent;
-        const grade = card.querySelector('.grade-badge')?.textContent;
-        
-        const assessments = [];
-        card.querySelectorAll('.assessment-item').forEach(assessment => {
-            assessments.push({
-                name: assessment.querySelector('.assessment-name')?.textContent,
-                weight: assessment.querySelector('.assessment-weight')?.textContent,
-                score: assessment.querySelector('.assessment-score')?.textContent
-            });
-        });
-        
-        grades.push({
-            course: courseName,
-            professor: professor,
-            grade: grade,
-            assessments: assessments
-        });
-    });
-    
-    console.log('📊 Notas exportadas:', grades);
-    return JSON.stringify(grades, null, 2);
+/**
+ * Ocultar loading
+ */
+function hideLoading() {
+    // El contenido se reemplaza automáticamente
 }
 
-// ========================================
-// Stats Update (Opcional)
-// ========================================
-
-// Actualizar tarjetas de resumen
-function updateSummaryCards(average, subjects, credits) {
-    const summaryValues = document.querySelectorAll('.summary-value');
-    
-    if (summaryValues[0]) {
-        summaryValues[0].textContent = average.toFixed(1);
-    }
-    if (summaryValues[1]) {
-        summaryValues[1].textContent = subjects;
-    }
-    if (summaryValues[2]) {
-        summaryValues[2].textContent = credits;
+/**
+ * Mostrar error
+ */
+function showError(message) {
+    const container = document.querySelector('.course-list');
+    if (container) {
+        container.innerHTML = `
+            <div class="error-state">
+                <p>⚠️ ${message}</p>
+                <button class="retry-btn" onclick="window.location.reload()">Reintentar</button>
+            </div>
+        `;
     }
 }
+
+// Agregar estilos dinámicos
+const style = document.createElement('style');
+style.textContent = `
+    .loading-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #666;
+    }
+    
+    .loading-spinner {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        border: 3px solid #e0e0e0;
+        border-radius: 50%;
+        border-top-color: #1E6CEB;
+        animation: spin 1s linear infinite;
+        margin-bottom: 16px;
+    }
+    
+    .error-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #E53E3E;
+    }
+    
+    .retry-btn {
+        background: #1E6CEB;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        margin-top: 16px;
+        cursor: pointer;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #666;
+    }
+    
+    .evaluation-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .evaluation-item:last-child {
+        border-bottom: none;
+    }
+    
+    .evaluation-left {
+        flex: 1;
+    }
+    
+    .evaluation-type {
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+    
+    .evaluation-title {
+        font-size: 14px;
+        font-weight: 500;
+        margin-top: 4px;
+    }
+    
+    .evaluation-right {
+        text-align: right;
+    }
+    
+    .evaluation-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        align-items: flex-end;
+        margin-bottom: 8px;
+    }
+    
+    .evaluation-date {
+        font-size: 12px;
+        color: #666;
+    }
+    
+    .evaluation-grade {
+        font-size: 16px;
+        font-weight: 700;
+        padding: 4px 12px;
+        border-radius: 12px;
+        display: inline-block;
+    }
+    
+    .badge-grade {
+        background: #059669;
+        color: white;
+    }
+    
+    .badge-pending {
+        background: #F59E0B;
+        color: white;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+`;
+document.head.appendChild(style);

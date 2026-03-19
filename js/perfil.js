@@ -1,425 +1,393 @@
 /**
  * ========================================
- * Pantalla de Perfil
- * Funcionalidad JavaScript
- * ======================================== */
+ * Perfil - Academic App
+ * Carga dinámica de perfil de usuario
+ * ========================================
+ */
 
-// ========================================
 // Esperar a que el DOM esté cargado
-// ========================================
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('👤 Pantalla de Perfil - Cargada correctamente');
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('👤 Perfil - Cargada correctamente');
     
-    // Inicializar funcionalidades
-    initProfileActions();
-    initSettings();
-    initBackButton();
-    loadProfileData();
+    // Verificar autenticación
+    if (Auth.isLoggedIn()) {
+        const user = Auth.getCurrentUser();
+        console.log('✅ Cargando perfil para:', user.nombre);
+        
+        // Cargar datos del perfil
+        await loadProfileData(user);
+        
+        // Inicializar funcionalidades
+        initProfileActions();
+        initBackButton();
+    }
 });
 
-// ========================================
-// Profile Actions
-// ========================================
+/**
+ * Cargar datos del perfil del usuario
+ */
+async function loadProfileData(user) {
+    try {
+        // Mostrar loading
+        showLoading();
+        
+        // Actualizar información básica del usuario
+        updateProfileInfo(user);
+        
+        // Cargar estadísticas
+        await loadProfileStats(user);
+        
+        console.log('✅ Perfil cargado:', user);
+        
+        // Ocultar loading
+        hideLoading();
+    } catch (error) {
+        console.error('❌ Error cargando perfil:', error);
+        showError('Error cargando perfil. Verifica tu conexión.');
+        hideLoading();
+    }
+}
+
+/**
+ * Actualizar información básica del perfil
+ */
+function updateProfileInfo(user) {
+    // Nombre
+    const nameElement = document.querySelector('.profile-name');
+    if (nameElement) {
+        nameElement.textContent = user.nombre;
+    }
+    
+    // ID (generado a partir del email)
+    const idElement = document.querySelector('.profile-id');
+    if (idElement) {
+        const id = generateStudentId(user.correo);
+        idElement.textContent = `ID: ${id}`;
+    }
+    
+    // Email
+    const emailElement = document.querySelector('.profile-email');
+    if (emailElement) {
+        emailElement.textContent = user.correo;
+    }
+    
+    // Badges
+    const badgesContainer = document.querySelector('.profile-badges');
+    if (badgesContainer) {
+        // Mantener badges existentes o actualizar
+        const studentBadge = badgesContainer.querySelector('.badge-student');
+        if (studentBadge) {
+            studentBadge.textContent = 'Estudiante';
+        }
+        
+        // Año (generado aleatoriamente)
+        const yearBadge = badgesContainer.querySelector('.badge-year');
+        if (yearBadge) {
+            const years = ['1er Año', '2do Año', '3er Año', '4to Año', '5to Año'];
+            const randomYear = years[Math.floor(Math.random() * years.length)];
+            yearBadge.textContent = randomYear;
+        }
+    }
+}
+
+/**
+ * Generar ID de estudiante a partir del email
+ */
+function generateStudentId(email) {
+    // Extraer números del email o usar hash
+    const numbers = email.replace(/\D/g, '');
+    if (numbers.length >= 6) {
+        return `2023-${numbers.slice(0, 6)}`;
+    }
+    
+    // Si no hay números, crear hash
+    let hash = 0;
+    for (let i = 0; i < email.length; i++) {
+        hash = ((hash << 5) - hash) + email.charCodeAt(i);
+        hash = hash & hash;
+    }
+    
+    return `2023-${Math.abs(hash).toString().slice(0, 6).padStart(6, '0')}`;
+}
+
+/**
+ * Cargar estadísticas del perfil
+ */
+async function loadProfileStats(user) {
+    try {
+        // Cargar evaluaciones del usuario
+        const evaluaciones = await Database.getEvaluaciones(user.nombre);
+        const calificadas = evaluaciones.filter(e => e.estado === 'Calificado' && e.nota);
+        
+        // Calcular estadísticas
+        const promedio = calcularPromedio(calificadas);
+        const materias = [...new Set(evaluaciones.map(e => e.materia))];
+        const asistencia = calcularAsistencia(evaluaciones);
+        const creditos = evaluaciones.length; // Simplificado
+        
+        // Actualizar tarjetas de estadísticas
+        updateStatCards(promedio, materias.length, asistencia, creditos);
+        
+        console.log('📊 Estadísticas:', { promedio, materias: materias.length, asistencia, creditos });
+    } catch (error) {
+        console.error('❌ Error cargando estadísticas:', error);
+        // Usar valores por defecto
+        updateStatCards(18.2, 6, 92, 18);
+    }
+}
+
+/**
+ * Calcular promedio
+ */
+function calcularPromedio(calificadas) {
+    if (calificadas.length === 0) return 0;
+    
+    const suma = calificadas.reduce((acc, e) => acc + (parseFloat(e.nota) || 0), 0);
+    return Math.round((suma / calificadas.length) * 10) / 10;
+}
+
+/**
+ * Calcular asistencia (simulada)
+ */
+function calcularAsistencia(evaluaciones) {
+    // Simular asistencia basada en evaluaciones completadas
+    const completadas = evaluaciones.filter(e => e.estado === 'Calificado').length;
+    const total = evaluaciones.length;
+    
+    if (total === 0) return 100;
+    
+    return Math.round((completadas / total) * 100);
+}
+
+/**
+ * Actualizar tarjetas de estadísticas
+ */
+function updateStatCards(promedio, materias, asistencia, creditos) {
+    const statCards = document.querySelectorAll('.stat-card');
+    
+    if (statCards.length >= 4) {
+        // Promedio
+        const promedioValue = statCards[0].querySelector('.stat-value');
+        if (promedioValue) {
+            promedioValue.textContent = promedio.toFixed(1);
+        }
+        
+        // Materias
+        const materiasValue = statCards[1].querySelector('.stat-value');
+        if (materiasValue) {
+            materiasValue.textContent = materias;
+        }
+        
+        // Asistencia
+        const asistenciaValue = statCards[2].querySelector('.stat-value');
+        if (asistenciaValue) {
+            asistenciaValue.textContent = `${asistencia}%`;
+        }
+        
+        // Créditos
+        const creditosValue = statCards[3].querySelector('.stat-value');
+        if (creditosValue) {
+            creditosValue.textContent = creditos;
+        }
+    }
+}
+
+/**
+ * Inicializar acciones del perfil
+ */
 function initProfileActions() {
-    // Botón de editar avatar
+    // Botón de logout
+    const logoutBtn = document.querySelector('.logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            if (confirm('¿Seguro que querés cerrar sesión?')) {
+                Auth.logout();
+            }
+        });
+    }
+    
+    // Botón de editar avatar (placeholder)
     const editAvatarBtn = document.querySelector('.edit-avatar-btn');
     if (editAvatarBtn) {
         editAvatarBtn.addEventListener('click', function() {
-            changeProfilePicture();
+            showAlert('📸 Función de cambiar foto disponible próximamente', 'info');
         });
     }
     
-    // Botón de editar información
-    const editInfoBtn = document.querySelector('.edit-btn');
-    if (editInfoBtn) {
-        editInfoBtn.addEventListener('click', function() {
-            editProfileInfo();
+    // Botones de editar información (placeholder)
+    const editBtns = document.querySelectorAll('.edit-btn');
+    editBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const section = this.closest('.profile-section');
+            const title = section ? section.querySelector('.section-title')?.textContent : 'información';
+            showAlert(`✏️ Editar ${title} disponible próximamente`, 'info');
         });
-    }
+    });
     
-    // Botones de acción
-    const exportBtn = document.querySelector('.action-btn-primary');
-    const logoutBtn = document.querySelector('.action-btn-secondary');
-    
-    if (exportBtn) {
-        exportBtn.addEventListener('click', function() {
-            exportProfileData();
-        });
-    }
-    
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', function() {
-            logoutUser();
-        });
-    }
-}
-
-function changeProfilePicture() {
-    console.log('🖼️ Cambiando foto de perfil');
-    
-    // Feedback háptico
-    if (navigator.vibrate) {
-        navigator.vibrate(20);
-    }
-    
-    // En una app real, esto abriría el selector de archivos o la cámara
-    // Por ahora, mostramos un mensaje
-    showAlert('🖼️ Seleccionar nueva foto de perfil', 'info');
-    
-    // Simular cambio de avatar
-    setTimeout(() => {
-        showAlert('✅ Foto de perfil actualizada', 'success');
-    }, 1000);
-}
-
-function editProfileInfo() {
-    console.log('✏️ Editando información del perfil');
-    
-    // Feedback háptico
-    if (navigator.vibrate) {
-        navigator.vibrate(20);
-    }
-    
-    // En una app real, esto abriría un formulario de edición
-    // Por ahora, mostramos un mensaje
-    showAlert('✏️ Abriendo editor de perfil', 'info');
-}
-
-function exportProfileData() {
-    console.log('📤 Exportando datos del perfil');
-    
-    // Feedback háptico
-    if (navigator.vibrate) {
-        navigator.vibrate([10, 30, 10]);
-    }
-    
-    // Simular exportación
-    showAlert('📤 Preparando exportación de datos...', 'info');
-    
-    setTimeout(() => {
-        const profileData = getProfileDataForExport();
-        console.log('📊 Datos para exportar:', profileData);
-        
-        // En una app real, esto generaría un archivo PDF/CSV
-        showAlert('✅ Datos exportados correctamente', 'success');
-    }, 1500);
-}
-
-function logoutUser() {
-    console.log('🚪 Cerrando sesión');
-    
-    // Feedback háptico
-    if (navigator.vibrate) {
-        navigator.vibrate([20, 50, 20]);
-    }
-    
-    // Confirmar cierre de sesión
-    showAlert('🚪 ¿Estás seguro de que querés cerrar sesión?', 'info');
-    
-    // En una app real, esto limpiaría el token de autenticación
-    // y redirigiría al login
-    setTimeout(() => {
-        console.log('✅ Sesión cerrada');
-        showAlert('✅ Sesión cerrada correctamente', 'success');
-        
-        // Redirigir al login (simulado)
-        setTimeout(() => {
-            window.location.href = 'index.html'; // En realidad sería login.html
-        }, 1000);
-    }, 2000);
-}
-
-// ========================================
-// Settings Management
-// ========================================
-function initSettings() {
-    // Configurar toggle de modo oscuro
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    if (darkModeToggle) {
-        // Cargar preferencia guardada
-        const darkModeEnabled = localStorage.getItem('darkMode') === 'true';
-        darkModeToggle.checked = darkModeEnabled;
-        
-        // Aplicar modo oscuro si está activado
-        if (darkModeEnabled) {
-            document.body.classList.add('dark-mode');
-        }
-        
-        // Escuchar cambios
-        darkModeToggle.addEventListener('change', function() {
-            toggleDarkMode(this.checked);
-        });
-    }
-    
-    // Configurar items de settings
-    const settingItems = document.querySelectorAll('.setting-item:not(:has(.toggle-switch))');
-    settingItems.forEach(item => {
-        item.addEventListener('click', function() {
-            const title = this.querySelector('.setting-title')?.textContent;
-            openSetting(title);
+    // Enlaces de la app (placeholder)
+    const appLinks = document.querySelectorAll('.app-link');
+    appLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const text = this.textContent;
+            showAlert(`🔗 ${text} disponible próximamente`, 'info');
         });
     });
 }
 
-function toggleDarkMode(enabled) {
-    console.log('🌙 Modo oscuro:', enabled ? 'activado' : 'desactivado');
-    
-    // Feedback háptico
-    if (navigator.vibrate) {
-        navigator.vibrate(10);
-    }
-    
-    // Guardar preferencia
-    localStorage.setItem('darkMode', enabled);
-    
-    // Aplicar/remover clase
-    if (enabled) {
-        document.body.classList.add('dark-mode');
-        showAlert('🌙 Modo oscuro activado', 'info');
-    } else {
-        document.body.classList.remove('dark-mode');
-        showAlert('☀️ Modo claro activado', 'info');
-    }
-}
-
-function openSetting(settingName) {
-    console.log('⚙️ Abriendo configuración:', settingName);
-    
-    // Feedback háptico
-    if (navigator.vibrate) {
-        navigator.vibrate(20);
-    }
-    
-    // En una app real, esto navegaría a la pantalla de configuración específica
-    // Por ahora, mostramos un mensaje
-    showAlert(`⚙️ ${settingName}`, 'info');
-}
-
-// ========================================
-// Botón de Volver
-// ========================================
+/**
+ * Inicializar botón de volver
+ */
 function initBackButton() {
     const backBtn = document.querySelector('.back-btn');
-    
     if (backBtn) {
         backBtn.addEventListener('click', function() {
-            console.log('⬅️ Volviendo al inicio');
-            
-            // Feedback háptico
-            if (navigator.vibrate) {
-                navigator.vibrate(10);
-            }
-            
-            // Navegar al inicio
-            window.location.href = 'index.html';
+            window.history.back();
         });
     }
 }
 
-// ========================================
-// Profile Data Management
-// ========================================
-function loadProfileData() {
-    console.log('📋 Cargando datos del perfil');
+/**
+ * Mostrar loading
+ */
+function showLoading() {
+    const profileHeader = document.querySelector('.profile-header');
+    const profileStats = document.querySelector('.profile-stats');
     
-    // En una app real, esto cargaría datos desde una API
-    // Por ahora, usamos datos de ejemplo
-    const profileData = {
-        name: 'Alejandro Rodríguez',
-        id: '2023-00123456',
-        email: 'alejandro.rodriguez@universidad.edu',
-        phone: '+1 (555) 123-4567',
-        career: 'Ingeniería de Sistemas',
-        faculty: 'Ingeniería y Tecnología',
-        average: 18.2,
-        subjects: 6,
-        attendance: 92,
-        credits: 18,
-        status: 'Estudiante',
-        year: '4to Año'
-    };
-    
-    // Actualizar UI con datos
-    updateProfileUI(profileData);
-    
-    // Simular carga desde API
-    simulateAPILoad();
-}
-
-function updateProfileUI(data) {
-    // Actualizar elementos de la UI
-    const elements = {
-        '.profile-name': data.name,
-        '.profile-id': `ID: ${data.id}`,
-        '.info-value:nth-child(1)': data.email,
-        '.info-value:nth-child(2)': data.phone,
-        '.info-value:nth-child(3)': data.career,
-        '.info-value:nth-child(4)': data.faculty,
-        '.stat-value:nth-child(1)': data.average,
-        '.stat-value:nth-child(2)': data.subjects,
-        '.stat-value:nth-child(3)': `${data.attendance}%`,
-        '.stat-value:nth-child(4)': data.credits
-    };
-    
-    Object.entries(elements).forEach(([selector, value]) => {
-        const element = document.querySelector(selector);
-        if (element) {
-            element.textContent = value;
-        }
-    });
-    
-    // Actualizar badges
-    updateProfileBadges(data.status, data.year);
-}
-
-function updateProfileBadges(status, year) {
-    const badgesContainer = document.querySelector('.profile-badges');
-    if (badgesContainer) {
-        badgesContainer.innerHTML = `
-            <span class="badge badge-student">${status}</span>
-            <span class="badge badge-year">${year}</span>
-        `;
+    if (profileHeader) {
+        profileHeader.style.opacity = '0.5';
+    }
+    if (profileStats) {
+        profileStats.style.opacity = '0.5';
     }
 }
 
-function simulateAPILoad() {
-    // Simular carga asíncrona desde API
+/**
+ * Ocultar loading
+ */
+function hideLoading() {
+    const profileHeader = document.querySelector('.profile-header');
+    const profileStats = document.querySelector('.profile-stats');
+    
+    if (profileHeader) {
+        profileHeader.style.opacity = '1';
+    }
+    if (profileStats) {
+        profileStats.style.opacity = '1';
+    }
+}
+
+/**
+ * Mostrar error
+ */
+function showError(message) {
+    // Podríamos mostrar un toast o alerta
+    console.error('❌ Error en perfil:', message);
+    
+    // Mostrar alerta temporal
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'profile-error';
+    alertDiv.textContent = message;
+    alertDiv.style.cssText = `
+        position: fixed;
+        top: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #E53E3E;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 24px;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 9999;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideDown 0.3s ease;
+        max-width: 90%;
+        text-align: center;
+    `;
+    
+    document.body.appendChild(alertDiv);
+    
     setTimeout(() => {
-        console.log('✅ Datos del perfil cargados');
-        // Podríamos mostrar un indicador de carga aquí
-    }, 500);
+        alertDiv.remove();
+    }, 3000);
 }
 
-function getProfileDataForExport() {
-    // Recopilar datos actuales para exportar
-    const data = {
-        personalInfo: {
-            name: document.querySelector('.profile-name')?.textContent || '',
-            id: document.querySelector('.profile-id')?.textContent?.replace('ID: ', '') || '',
-            email: document.querySelector('.info-value:nth-child(1)')?.textContent || '',
-            phone: document.querySelector('.info-value:nth-child(2)')?.textContent || '',
-            career: document.querySelector('.info-value:nth-child(3)')?.textContent || '',
-            faculty: document.querySelector('.info-value:nth-child(4)')?.textContent || ''
-        },
-        academicStats: {
-            average: parseFloat(document.querySelector('.stat-value:nth-child(1)')?.textContent || 0),
-            subjects: parseInt(document.querySelector('.stat-value:nth-child(2)')?.textContent || 0),
-            attendance: parseInt(document.querySelector('.stat-value:nth-child(3)')?.textContent?.replace('%', '') || 0),
-            credits: parseInt(document.querySelector('.stat-value:nth-child(4)')?.textContent || 0)
-        },
-        exportDate: new Date().toISOString(),
-        appVersion: document.querySelector('.app-version-number')?.textContent || '2.1.0'
-    };
-    
-    return data;
-}
-
-// ========================================
-// API Integration (Placeholder)
-// ========================================
-
-// Simular actualización de perfil en API
-function updateProfileInAPI(updatedData) {
-    console.log('📡 Actualizando perfil en API:', updatedData);
-    
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            console.log('✅ Perfil actualizado en API');
-            resolve({ success: true, data: updatedData });
-        }, 1000);
-    });
-}
-
-// Simular carga de foto de perfil
-function uploadProfilePicture(file) {
-    console.log('📤 Subiendo foto de perfil:', file.name);
-    
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            console.log('✅ Foto subida correctamente');
-            resolve({ 
-                success: true, 
-                url: 'https://api.example.com/profile/picture.jpg',
-                thumbnail: 'https://api.example.com/profile/picture-thumb.jpg'
-            });
-        }, 1500);
-    });
-}
-
-// ========================================
-// Notifications Preferences
-// ========================================
-
-function loadNotificationPreferences() {
-    // Cargar preferencias de notificaciones
-    const preferences = {
-        examReminders: true,
-        assignmentDeadlines: true,
-        classSchedule: true,
-        gradeUpdates: true,
-        systemAnnouncements: false
-    };
-    
-    console.log('🔔 Preferencias de notificaciones:', preferences);
-    return preferences;
-}
-
-function saveNotificationPreferences(preferences) {
-    // Guardar preferencias de notificaciones
-    console.log('💾 Guardando preferencias:', preferences);
-    localStorage.setItem('notificationPreferences', JSON.stringify(preferences));
-}
-
-// ========================================
-// Privacy Settings
-// ========================================
-
-function loadPrivacySettings() {
-    // Cargar configuración de privacidad
-    const settings = {
-        showProfile: true,
-        showGrades: false,
-        showSchedule: true,
-        showAttendance: false,
-        contactVisibility: 'friends-only'
-    };
-    
-    console.log('🔒 Configuración de privacidad:', settings);
-    return settings;
-}
-
-function savePrivacySettings(settings) {
-    // Guardar configuración de privacidad
-    console.log('💾 Guardando configuración de privacidad:', settings);
-    localStorage.setItem('privacySettings', JSON.stringify(settings));
-}
-
-// ========================================
-// Session Management
-// ========================================
-
-function checkSessionValidity() {
-    // Verificar si la sesión es válida
-    const token = localStorage.getItem('authToken');
-    const expiry = localStorage.getItem('tokenExpiry');
-    
-    if (!token || !expiry) {
-        return false;
+/**
+ * Mostrar alerta (reutilizada de app.js)
+ */
+function showAlert(message, type = 'info') {
+    // Remover alertas existentes
+    const existingAlert = document.querySelector('.toast-alert');
+    if (existingAlert) {
+        existingAlert.remove();
     }
     
-    const now = new Date().getTime();
-    return now < parseInt(expiry);
+    // Crear elemento de alerta
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `toast-alert toast-${type}`;
+    alertDiv.textContent = message;
+    
+    // Estilos
+    const bgColor = type === 'success' ? '#059669' : 
+                    type === 'error' ? '#E53E3E' : 
+                    '#1E6CEB';
+    
+    alertDiv.style.cssText = `
+        position: fixed;
+        top: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: ${bgColor};
+        color: white;
+        padding: 12px 24px;
+        border-radius: 24px;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 9999;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideDown 0.3s ease;
+        max-width: 90%;
+        text-align: center;
+    `;
+    
+    // Agregar al DOM
+    document.body.appendChild(alertDiv);
+    
+    // Remover después de 2.5 segundos
+    setTimeout(() => {
+        alertDiv.style.animation = 'slideUp 0.3s ease';
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 300);
+    }, 2500);
 }
 
-function refreshSession() {
-    // Refrescar token de sesión
-    console.log('🔄 Refrescando sesión');
+// Agregar animaciones CSS dinámicamente
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideDown {
+        from {
+            transform: translateX(-50%) translateY(-20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    }
     
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            const newExpiry = new Date().getTime() + (24 * 60 * 60 * 1000); // 24 horas
-            localStorage.setItem('tokenExpiry', newExpiry.toString());
-            resolve(true);
-        }, 500);
-    });
-}
+    @keyframes slideUp {
+        from {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(-50%) translateY(-20px);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);

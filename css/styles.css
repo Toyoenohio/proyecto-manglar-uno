@@ -685,3 +685,179 @@ body {
         display: none;
     }
 }
+
+/* ========================================
+   Estilos adicionales para datos dinámicos
+   ======================================== */
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+    font-size: 14px;
+}
+
+.loading-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e0e0e0;
+    border-radius: 50%;
+    border-top-color: #1E6CEB;
+    animation: spin 1s linear infinite;
+    margin-bottom: 16px;
+}
+
+.error-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #E53E3E;
+}
+
+.retry-btn {
+    background: #1E6CEB;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    margin-top: 16px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Estilos para evaluaciones dinámicas */
+.evaluation-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.evaluation-item:last-child {
+    border-bottom: none;
+}
+
+.evaluation-left {
+    flex: 1;
+}
+
+.evaluation-type {
+    font-size: 12px;
+    color: #666;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.evaluation-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 4px;
+}
+
+.evaluation-right {
+    text-align: right;
+}
+
+.evaluation-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-end;
+    margin-bottom: 8px;
+}
+
+.evaluation-date {
+    font-size: 12px;
+    color: #666;
+}
+
+.evaluation-grade {
+    font-size: 16px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 12px;
+    display: inline-block;
+}
+
+.badge-grade {
+    background: #059669;
+    color: white;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.badge-pending {
+    background: #F59E0B;
+    color: white;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+/* Toast alerts */
+.toast-alert {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #1E6CEB;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 24px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 9999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    animation: slideDown 0.3s ease;
+    max-width: 90%;
+    text-align: center;
+}
+
+.toast-success {
+    background-color: #059669;
+}
+
+.toast-error {
+    background-color: #E53E3E;
+}
+
+.toast-info {
+    background-color: #1E6CEB;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateX(-50%) translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(-50%) translateY(-20px);
+        opacity: 0;
+    }
+}
