@@ -8,11 +8,15 @@
 // Esperar a que el DOM esté cargado
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('👤 Perfil - Cargada correctamente');
+    console.log('📱 Página de perfil cargada');
     
     // Verificar autenticación
+    console.log('🔍 Verificando autenticación...');
     if (Auth.isLoggedIn()) {
         const user = Auth.getCurrentUser();
-        console.log('✅ Cargando perfil para:', user.nombre);
+        console.log('✅ Usuario autenticado:', user);
+        console.log('📝 Nombre del usuario:', user.nombre);
+        console.log('📧 Email del usuario:', user.correo);
         
         // Cargar datos del perfil
         await loadProfileData(user);
@@ -20,6 +24,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Inicializar funcionalidades
         initProfileActions();
         initBackButton();
+    } else {
+        console.log('❌ Usuario NO autenticado');
+        console.log('🔑 Redirigiendo a login...');
+        // Auth.requireAuth(); // Comentado temporalmente para debug
     }
 });
 
@@ -52,28 +60,40 @@ async function loadProfileData(user) {
  * Actualizar información básica del perfil
  */
 function updateProfileInfo(user) {
+    console.log('🔄 Actualizando perfil con usuario:', user);
+    
     // Nombre
     const nameElement = document.querySelector('.profile-name');
     if (nameElement) {
+        console.log('📝 Cambiando nombre de:', nameElement.textContent, 'a:', user.nombre);
         nameElement.textContent = user.nombre;
+    } else {
+        console.log('❌ No se encontró elemento .profile-name');
     }
     
     // ID (generado a partir del email)
     const idElement = document.querySelector('.profile-id');
     if (idElement) {
         const id = generateStudentId(user.correo);
+        console.log('🆔 Generando ID:', id, 'para email:', user.correo);
         idElement.textContent = `ID: ${id}`;
+    } else {
+        console.log('❌ No se encontró elemento .profile-id');
     }
     
     // Email
     const emailElement = document.querySelector('.profile-email');
     if (emailElement) {
+        console.log('📧 Actualizando email a:', user.correo);
         emailElement.textContent = user.correo;
+    } else {
+        console.log('ℹ️ No se encontró elemento .profile-email (puede ser normal)');
     }
     
     // Badges
     const badgesContainer = document.querySelector('.profile-badges');
     if (badgesContainer) {
+        console.log('🎯 Badges container encontrado');
         // Mantener badges existentes o actualizar
         const studentBadge = badgesContainer.querySelector('.badge-student');
         if (studentBadge) {
@@ -87,7 +107,11 @@ function updateProfileInfo(user) {
             const randomYear = years[Math.floor(Math.random() * years.length)];
             yearBadge.textContent = randomYear;
         }
+    } else {
+        console.log('❌ No se encontró elemento .profile-badges');
     }
+    
+    console.log('✅ Perfil actualizado correctamente');
 }
 
 /**
