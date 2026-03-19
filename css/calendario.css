@@ -550,3 +550,106 @@
         font-size: 20px;
     }
 }
+
+/* ========================================
+   Estilos para datos dinámicos
+   ======================================== */
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+    font-size: 14px;
+    grid-column: 1 / -1;
+}
+
+.upcoming-meta {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.badge-urgent-time {
+    background-color: var(--rojo-claro);
+    color: var(--rojo-alerta);
+    padding: 4px 8px;
+    border-radius: var(--radius-xl);
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.badge-date {
+    background-color: var(--gris-claro);
+    color: var(--gris-medio);
+    padding: 4px 8px;
+    border-radius: var(--radius-xl);
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.badge-urgent-time svg,
+.badge-date svg {
+    width: 12px;
+    height: 12px;
+}
+
+.event-dot {
+    width: 4px;
+    height: 4px;
+    background-color: #1E6CEB;
+    border-radius: 50%;
+    margin: 2px auto 0;
+}
+
+/* Badges para tipos de eventos */
+.badge-exam {
+    background-color: #E53935;
+    color: white;
+}
+
+.badge-assignment {
+    background-color: #1E88E5;
+    color: white;
+}
+
+.badge-project {
+    background-color: #43A047;
+    color: white;
+}
+
+.badge-quiz {
+    background-color: #FB8C00;
+    color: white;
+}
+
+.badge-presentation {
+    background-color: #8E24AA;
+    color: white;
+}
+
+/* Iconos para eventos */
+.event-icon.exam {
+    background-color: #FFEBEE;
+}
+
+.event-icon.assignment {
+    background-color: #E3F2FD;
+}
+
+.event-icon.project {
+    background-color: #E8F5E9;
+}
+
+.event-icon.quiz {
+    background-color: #FFF3E0;
+}
+
+.event-icon.presentation {
+    background-color: #F3E5F5;
+}
